@@ -6,7 +6,7 @@ import CustomChip from "../atoms/Chip";
 import AreasTable from "../organisms/TableAreas";
 import { Area } from "../../../types/Areas/Area";
 import { Bodega } from "../../../types/Bodegas/Bodega";
-import BodegasTable from "../organisms/Tablebodegas";
+import BodegasTable from "../organisms/TableBodegas";
 import { Centro } from "../../../types/Centros/Centro";
 import CentrosTable from "../organisms/TableCentros";
 import { Elemento } from "../../../types/Elementos/Elemento";
@@ -19,11 +19,16 @@ import ProgramasTable from "../organisms/TableProgramas";
 import { Programa } from "../../../types/Programas/Programa";
 import RolesTable from "../organisms/TableRoles";
 import { Rol } from "../../../types/Roles/Rol";
-import SedesTable from "../organisms/TableSedes"; // ✅ importa la tabla de sedes
+import SedesTable from "../organisms/TableSedes";
 import { Sede } from "../../../types/Sedes/Sede";
 
-const GesTablesUser = () => {
-  // 🔹 Datos de prueba Áreas
+// 🔴 CORRECCIÓN 1:
+// El componente ahora recibe 'areasData' como una prop. Se le añade un valor
+// por defecto ([]) para que no falle si en algún momento no se le pasa nada.
+const GesTablesUser = ({ areasData = [] }: { areasData: Area[] }) => {
+
+  // ✅ El resto de los datos de prueba se mantienen intactos.
+  // 🔹 Datos de prueba Sedes
   const sedesData: Sede[] = [
     {
       idSedes: 1,
@@ -48,6 +53,8 @@ const GesTablesUser = () => {
       fichas: [],
     },
   ];
+
+  // 🔹 Datos de prueba Roles
   const rolesData: Rol[] = [
     {
       idRol: 1,
@@ -69,6 +76,9 @@ const GesTablesUser = () => {
     },
   ];
 
+  // ❌ ELIMINADO: Ya no se necesitan los datos de prueba para 'areasData'
+  // porque ahora los recibimos desde las props.
+  /*
   const areasData: Area[] = [
     {
       idArea: 1,
@@ -86,6 +96,8 @@ const GesTablesUser = () => {
       usuarios: [{ idUsuario: 3, nombres: "Ana", apellidos: "Martínez" }],
     },
   ];
+  */
+
   // 🔹 Datos de prueba Municipios
   const municipiosData: Municipio[] = [
     {
@@ -226,6 +238,7 @@ const GesTablesUser = () => {
     },
   ];
 
+    // 🔹 Datos de prueba Programas
   const programasData: Programa[] = [
     {
       idPrograma: 1,
@@ -253,8 +266,10 @@ const GesTablesUser = () => {
       titulo: "Áreas",
       descripcion: "Gestión de áreas del sistema",
       categoria: "areas",
+      // 🔴 CORRECCIÓN 2: Se usa la longitud de los datos de la prop
       registros: areasData.length,
       icon: <Grid size={20} />,
+      // 🔴 CORRECCIÓN 3: Se pasan los datos de la prop al componente de la tabla
       modalContent: <AreasTable titulo="Tabla de Áreas" data={areasData} />,
     },
     {
@@ -300,7 +315,7 @@ const GesTablesUser = () => {
       descripcion: "Gestión de municipios y sus centros",
       categoria: "municipios",
       registros: municipiosData.length,
-      icon: <Landmark size={20} />, // puedes usar otro ícono si quieres diferenciarlo
+      icon: <Landmark size={20} />,
       modalContent: (
         <MunicipioTable titulo="Tabla de Municipios" data={municipiosData} />
       ),
@@ -328,7 +343,7 @@ const GesTablesUser = () => {
       descripcion: "Gestión de sedes institucionales",
       categoria: "sedes",
       registros: sedesData.length,
-      icon: <Landmark size={20} />, // o cualquier otro ícono que prefieras
+      icon: <Landmark size={20} />,
       modalContent: <SedesTable titulo="Tabla de Sedes" data={sedesData} />,
     },
   ];
