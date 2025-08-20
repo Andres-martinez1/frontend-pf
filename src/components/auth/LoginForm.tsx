@@ -29,7 +29,7 @@ const LoginForm = () => {
     // Puede ser Role.ADMIN, Role.admin, etc.
     const fakeUser = new User(
       "Admin de Prueba",
-      "admin@test.com",
+      "adminmar@test.com",
       Role.ADMIN // O el rol que necesites para acceder
     );
 
