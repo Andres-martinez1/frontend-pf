@@ -1,7 +1,7 @@
 import { api } from "../../lib/axios";
-import { GetArea } from "../../types/Areas/GetArea";
+import { AreasResponse } from "../../types/Areas/AreaResponse";
 
-export const getAreas = async (): Promise<GetArea[]> => {
+export const getAreas = async (): Promise<AreasResponse> => {
   const response = await api.get("/areas");
-  return response.data.data;
+  return response.data;
 };

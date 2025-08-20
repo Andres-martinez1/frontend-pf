@@ -1,44 +1,55 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getAreas } from "../../api/Areas/getAreas";
-import { postArea, AreaPostData } from "../../api/Areas/postArea";
-import { updateArea, AreaPutData } from "../../api/Areas/putArea";
-import { deleteArea } from "../../api/Areas/deleteArea";
-import { GetArea } from "../../types/Areas/GetArea";
+import { getAreas, getAreaById, postArea, updateArea, deleteArea } from "../../api/Areas/index";
+import { Area } from "../../types/Areas/Area";
+import { AreaPostData } from "../../types/Areas/AreaPost";
+import { AreaPutData } from "../../types/Areas/AreaPut";
+import { AreaResponse } from "../../types/Areas/AreaResponse";
 
 export function useAreas() {
   const queryClient = useQueryClient();
 
-  const { data, isLoading, isError } = useQuery<GetArea[]>({
+  const areasQuery = useQuery<Area[]>({
     queryKey: ["areas"],
     queryFn: getAreas,
   });
 
-  const crearArea = useMutation({
-    mutationFn: (data: AreaPostData) => postArea(data),
+  const getAreaByIdQuery = (id: number) =>
+    useQuery<Area>({
+      queryKey: ["areas", id],
+      queryFn: () => getAreaById(id),
+      enabled: !!id,
+    });
+
+  const crearArea = useMutation<AreaResponse, Error, AreaPostData>({
+    mutationFn: postArea,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["areas"] });
     },
   });
 
-  const actualizarArea = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: AreaPutData }) =>
-      updateArea(id, data),
+  const actualizarArea = useMutation<
+    AreaResponse,
+    Error,
+    { id: number; data: AreaPutData }
+  >({
+    mutationFn: ({ id, data }) => updateArea(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["areas"] });
     },
   });
 
-  const eliminarArea = useMutation({
-    mutationFn: (id: number) => deleteArea(id),
+  const eliminarArea = useMutation<{ message: string }, Error, number>({
+    mutationFn: deleteArea,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["areas"] });
     },
   });
 
   return {
-    areas: data ?? [],
-    isLoading,
-    isError,
+    areas: areasQuery.data ?? [],
+    isLoading: areasQuery.isLoading,
+    isError: areasQuery.isError,
+    getAreaByIdQuery,
     crearArea,
     actualizarArea,
     eliminarArea,

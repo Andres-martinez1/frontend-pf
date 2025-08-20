@@ -1,47 +1,53 @@
-// src/hooks/Bodegas/useBodegas.ts
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getBodega } from "../../api/Bodegas/getBodegas";
-import { postBodega, BodegaPostData } from "../../api/Bodegas/postBodega";
-import { updateBodega, BodegaPutData } from "../../api/Bodegas/putBodega";
-import { deleteBodega } from "../../api/Bodegas/deleteBodega";
-import { GetBodega } from "../../types/Bodegas/GetBodega";
+import {
+  getBodegas,
+  getBodegaById,
+  postBodega,
+  putBodega,
+  deleteBodega,
+} from "../../api/Bodegas/index";
+import { Bodega } from "../../types/Bodegas/Bodega";
+import { BodegaPost } from "../../types/Bodegas/BodegaPost";
+import { BodegaPut } from "../../types/Bodegas/BodegaPut";
 
 export function useBodegas() {
   const queryClient = useQueryClient();
 
-  const { data, isLoading, isError } = useQuery<GetBodega[]>({
+  const { data, isLoading, isError } = useQuery<Bodega[]>({
     queryKey: ["bodegas"],
-    queryFn: getBodega,
+    queryFn: getBodegas,
   });
 
-  const crearBodega = useMutation({
-    mutationFn: (data: BodegaPostData) => postBodega(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["bodegas"] });
-    },
+  const crear = useMutation({
+    mutationFn: (payload: BodegaPost) => postBodega(payload),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["bodegas"] }),
   });
 
-  const actualizarBodega = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: BodegaPutData }) =>
-      updateBodega(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["bodegas"] });
-    },
+  const actualizar = useMutation({
+    mutationFn: ({ id, data }: { id: number; data: BodegaPut }) =>
+      putBodega(id, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["bodegas"] }),
   });
 
-  const eliminarBodega = useMutation({
+  const eliminar = useMutation({
     mutationFn: (id: number) => deleteBodega(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["bodegas"] });
-    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["bodegas"] }),
   });
 
   return {
-    bodegas: data ?? [],
+    registros: data ?? [],
     isLoading,
     isError,
-    crearBodega,
-    actualizarBodega,
-    eliminarBodega,
+    crear,
+    actualizar,
+    eliminar,
   };
+}
+
+export function useBodega(id: number) {
+  return useQuery<Bodega>({
+    queryKey: ["bodega", id],
+    queryFn: () => getBodegaById(id),
+    enabled: !!id,
+  });
 }

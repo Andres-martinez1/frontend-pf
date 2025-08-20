@@ -1,5 +1,5 @@
 import { GetRol } from "../Roles/GetRoles";
-import { GetArea } from "../Areas/GetArea";
+import { GetArea } from "../Areas/Area";
 
 export interface GetUsuario {
   idUsuario: number;

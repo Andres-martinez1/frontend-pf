@@ -1,7 +1,7 @@
 import { api } from "../../lib/axios";
-import { GetBodega } from "../../types/Bodegas/GetBodega";
+import { BodegasResponse } from "../../types/Bodegas/BodegaResponse";
 
-export const getBodega = async (): Promise<GetBodega[]> => {
+export const getBodegas = async (): Promise<BodegasResponse> => {
   const response = await api.get("/bodegas");
-  return response.data.data;
+  return response.data;
 };
