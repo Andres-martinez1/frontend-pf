@@ -1,7 +1,7 @@
 import { api } from "../../lib/axios";
-import { GetUsuario } from "../../types/Usuarios/GetUsuario";
+import { UsuariosResponse } from "../../types/Usuarios/UsuarioResponse";
 
-export const getUsuarios = async (): Promise<GetUsuario[]> => {
+export const getUsuarios = async (): Promise<UsuariosResponse> => {
   const response = await api.get("/usuarios");
-  return response.data.data; 
+  return response.data.data;
 };

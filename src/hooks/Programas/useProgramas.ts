@@ -1,44 +1,45 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getPrograma } from "../../api/Programas/getProgramas";
-import { postPrograma, ProgramaPostData } from "../../api/Programas/postPrograma";
-import { updatePrograma, ProgramaPutData } from "../../api/Programas/putPrograma";
-import { deletePrograma } from "../../api/Programas/deletePrograma";
-import { GetPrograma } from "../../types/Programas/GetPrograma";
+import { getProgramas, getProgramaById, postPrograma, updatePrograma, deletePrograma } from "../../api/Programas";
+import { Programa } from "../../types/Programas/Programa";
+import { ProgramaPostData } from "../../types/Programas/ProgramaPost";
+import { ProgramaPutData } from "../../types/Programas/ProgramaPut";
+import { ProgramaResponse } from "../../types/Programas/ProgramaResponse";
 
 export function useProgramas() {
   const queryClient = useQueryClient();
 
-  const { data, isLoading, isError } = useQuery<GetPrograma[]>({
+  const programasQuery = useQuery<Programa[]>({
     queryKey: ["programas"],
-    queryFn: getPrograma,
+    queryFn: getProgramas,
   });
 
-  const crearPrograma = useMutation({
-    mutationFn: (data: ProgramaPostData) => postPrograma(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["programas"] });
-    },
+  const getProgramaByIdQuery = (id: number) =>
+    useQuery<Programa>({
+      queryKey: ["programas", id],
+      queryFn: () => getProgramaById(id),
+      enabled: !!id,
+    });
+
+  const crearPrograma = useMutation<ProgramaResponse, Error, ProgramaPostData>({
+    mutationFn: postPrograma,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["programas"] }),
   });
 
-  const actualizarPrograma = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: ProgramaPutData }) =>
-      updatePrograma(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["programas"] });
-    },
+  const actualizarPrograma = useMutation<ProgramaResponse, Error, { id: number; data: ProgramaPutData }>({
+    mutationFn: ({ id, data }) => updatePrograma(id, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["programas"] }),
   });
 
-  const eliminarPrograma = useMutation({
-    mutationFn: (id: number) => deletePrograma(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["programas"] });
-    },
+  const eliminarPrograma = useMutation<{ message: string }, Error, number>({
+    mutationFn: deletePrograma,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["programas"] }),
   });
 
   return {
-    programas: data ?? [],
-    isLoading,
-    isError,
+    programas: programasQuery.data ?? [],
+    isLoading: programasQuery.isLoading,
+    isError: programasQuery.isError,
+    getProgramaByIdQuery,
     crearPrograma,
     actualizarPrograma,
     eliminarPrograma,

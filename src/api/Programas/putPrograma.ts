@@ -1,10 +1,8 @@
 import { api } from "../../lib/axios";
+import { ProgramaPutData } from "../../types/Programas/ProgramaPut";
+import { ProgramaResponse } from "../../types/Programas/ProgramaResponse";
 
-export interface ProgramaPutData {
-  nombrePrograma: string;
-}
-
-export async function updatePrograma(id: number, data: ProgramaPutData) {
+export const updatePrograma = async (id: number, data: ProgramaPutData): Promise<ProgramaResponse> => {
   const response = await api.put(`/programas/${id}`, data);
   return response.data;
-}
+};

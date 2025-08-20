@@ -1,11 +1,8 @@
 import { api } from "../../lib/axios";
+import { SedePostData } from "../../types/Sedes/SedePost";
+import { SedeResponse } from "../../types/Sedes/SedeResponse";
 
-export interface SedePostData {
-  nombreSede: string;
-  fkIdCentro: number;
-}
-
-export async function postSede(data: SedePostData) {
+export const postSede = async (data: SedePostData): Promise<SedeResponse> => {
   const response = await api.post("/sedes", data);
   return response.data;
-}
+};

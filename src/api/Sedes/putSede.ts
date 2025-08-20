@@ -1,11 +1,8 @@
 import { api } from "../../lib/axios";
+import { SedePutData } from "../../types/Sedes/SedePut";
+import { SedeResponse } from "../../types/Sedes/SedeResponse";
 
-export interface SedePutData {
-  nombreSede: string;
-  fkIdCentro: number;
-}
-
-export async function updateSede(id: number, data: SedePutData) {
+export const updateSede = async (id: number, data: SedePutData): Promise<SedeResponse> => {
   const response = await api.put(`/sedes/${id}`, data);
   return response.data;
-}
+};

@@ -1,0 +1,21 @@
+export type Usuario = {
+  idUsuario: number;
+  identificacion: string;
+  nombres: string;
+  apellidos: string;
+  correo: string;
+  password?: string;
+  img?: string | null;
+  estado?: string | null;
+  ubicacion?: string | null;
+  fechaIngreso?: string | null;
+  habilidadesTecnicas?: string | null;
+  fkIdArea?: { idArea: number; nombre?: string };
+  fkIdPermisos?: { idPermiso: number; nombre?: string };
+  fkIdRol?: { idRol: number; nombre?: string };
+  bodegases?: any[];
+  movimientos?: any[];
+  solicitudes?: any[];
+  usuarioBodegas?: any[];
+  usuarioFichas?: any[];
+};

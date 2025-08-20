@@ -1,50 +1,51 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getUsuarioFicha } from "../../api/Usuario_ficha/getUsuario_ficha";
-import {
-  postUsuarioFicha,
-  UsuarioFichaPostData,
-} from "../../api/Usuario_ficha/postUsuario_ficha";
-import {
-  updateUsuarioFicha,
-  UsuarioFichaPutData,
-} from "../../api/Usuario_ficha/putUsuario_ficha";
-import { deleteUsuarioFicha } from "../../api/Usuario_ficha/deleteUsuario_ficha";
-import { GetUsuarioFicha } from "../../types/Usuario_ficha/GetUsuario_ficha";
+import { 
+  getUsuarioFichas, 
+  getUsuarioFichaById, 
+  postUsuarioFicha, 
+  updateUsuarioFicha, 
+  deleteUsuarioFicha 
+} from "../../api/Usuario_ficha";
+import { UsuarioFicha } from "../../types/Usuario_ficha/UsuarioFicha";
+import { UsuarioFichaPostData } from "../../types/Usuario_ficha/UsuarioFichaPost";
+import { UsuarioFichaPutData } from "../../types/Usuario_ficha/UsuarioFichaPut";
+import { UsuarioFichaResponse } from "../../types/Usuario_ficha/UsuarioFichaResponse";
 
 export function useUsuarioFicha() {
   const queryClient = useQueryClient();
 
-  const { data, isLoading, isError } = useQuery<GetUsuarioFicha[]>({
-    queryKey: ["usuarioFicha"],
-    queryFn: getUsuarioFicha,
+  const usuarioFichasQuery = useQuery<UsuarioFicha[]>({
+    queryKey: ["usuarioFichas"],
+    queryFn: getUsuarioFichas,
   });
 
-  const crearUsuarioFicha = useMutation({
-    mutationFn: (data: UsuarioFichaPostData) => postUsuarioFicha(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["usuarioFicha"] });
-    },
+  const getUsuarioFichaByIdQuery = (id: number) =>
+    useQuery<UsuarioFicha>({
+      queryKey: ["usuarioFichas", id],
+      queryFn: () => getUsuarioFichaById(id),
+      enabled: !!id,
+    });
+
+  const crearUsuarioFicha = useMutation<UsuarioFichaResponse, Error, UsuarioFichaPostData>({
+    mutationFn: postUsuarioFicha,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["usuarioFichas"] }),
   });
 
-  const actualizarUsuarioFicha = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: UsuarioFichaPutData }) =>
-      updateUsuarioFicha(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["usuarioFicha"] });
-    },
+  const actualizarUsuarioFicha = useMutation<UsuarioFichaResponse, Error, { id: number; data: UsuarioFichaPutData }>({
+    mutationFn: ({ id, data }) => updateUsuarioFicha(id, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["usuarioFichas"] }),
   });
 
-  const eliminarUsuarioFicha = useMutation({
-    mutationFn: (id: number) => deleteUsuarioFicha(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["usuarioFicha"] });
-    },
+  const eliminarUsuarioFicha = useMutation<{ message: string }, Error, number>({
+    mutationFn: deleteUsuarioFicha,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["usuarioFichas"] }),
   });
 
   return {
-    usuarioFicha: data ?? [],
-    isLoading,
-    isError,
+    usuarioFichas: usuarioFichasQuery.data ?? [],
+    isLoading: usuarioFichasQuery.isLoading,
+    isError: usuarioFichasQuery.isError,
+    getUsuarioFichaByIdQuery,
     crearUsuarioFicha,
     actualizarUsuarioFicha,
     eliminarUsuarioFicha,

@@ -1,7 +1,7 @@
 import { api } from "../../lib/axios";
-import { GetMunicipio } from "../../types/Municipios/GetMunicipio";
+import { MunicipiosResponse } from "../../types/Municipios/MunicipioResponse";
 
-export const getMunicipios = async (): Promise<GetMunicipio[]> => {
-  const response = await api.get("/municipio");
+export const getMunicipios = async (): Promise<MunicipiosResponse> => {
+  const response = await api.get("/municipios");
   return response.data.data;
 };

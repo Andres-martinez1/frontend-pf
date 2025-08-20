@@ -1,44 +1,45 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getSolicitud } from "../../api/Solicitudes/getSolicitudes";
-import { postSolicitud, SolicitudPostData } from "../../api/Solicitudes/postSolicitudes";
-import { updateSolicitud, SolicitudPutData } from "../../api/Solicitudes/putSolicitudes";
-import { deleteSolicitud } from "../../api/Solicitudes/deleteSolicitudes";
-import { GetSolicitud } from "../../types/Solicitudes/GetSolicitudes";
+import { getSolicitudes, getSolicitudById, postSolicitud, updateSolicitud, deleteSolicitud } from "../../api/Solicitudes";
+import { Solicitud } from "../../types/Solicitudes/Solicitud";
+import { SolicitudPostData } from "../../types/Solicitudes/SolicitudPost";
+import { SolicitudPutData } from "../../types/Solicitudes/SolicitudPut";
+import { SolicitudResponse } from "../../types/Solicitudes/SolicitudResponse";
 
 export function useSolicitudes() {
   const queryClient = useQueryClient();
 
-  const { data, isLoading, isError } = useQuery<GetSolicitud[]>({
+  const solicitudesQuery = useQuery<Solicitud[]>({
     queryKey: ["solicitudes"],
-    queryFn: getSolicitud,
+    queryFn: getSolicitudes,
   });
 
-  const crearSolicitud = useMutation({
-    mutationFn: (data: SolicitudPostData) => postSolicitud(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["solicitudes"] });
-    },
+  const getSolicitudByIdQuery = (id: number) =>
+    useQuery<Solicitud>({
+      queryKey: ["solicitudes", id],
+      queryFn: () => getSolicitudById(id),
+      enabled: !!id,
+    });
+
+  const crearSolicitud = useMutation<SolicitudResponse, Error, SolicitudPostData>({
+    mutationFn: postSolicitud,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["solicitudes"] }),
   });
 
-  const actualizarSolicitud = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: SolicitudPutData }) =>
-      updateSolicitud(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["solicitudes"] });
-    },
+  const actualizarSolicitud = useMutation<SolicitudResponse, Error, { id: number; data: SolicitudPutData }>({
+    mutationFn: ({ id, data }) => updateSolicitud(id, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["solicitudes"] }),
   });
 
-  const eliminarSolicitud = useMutation({
-    mutationFn: (id: number) => deleteSolicitud(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["solicitudes"] });
-    },
+  const eliminarSolicitud = useMutation<{ message: string }, Error, number>({
+    mutationFn: deleteSolicitud,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["solicitudes"] }),
   });
 
   return {
-    solicitudes: data ?? [],
-    isLoading,
-    isError,
+    solicitudes: solicitudesQuery.data ?? [],
+    isLoading: solicitudesQuery.isLoading,
+    isError: solicitudesQuery.isError,
+    getSolicitudByIdQuery,
     crearSolicitud,
     actualizarSolicitud,
     eliminarSolicitud,

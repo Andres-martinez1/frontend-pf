@@ -1,44 +1,51 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getUsuarioBodega } from "../../api/Usuario_bodega/getUsuario_bodega";
-import { postUsuarioBodega, UsuarioBodegaPostData } from "../../api/Usuario_bodega/postUsuario_bodega";
-import { updateUsuarioBodega, UsuarioBodegaPutData } from "../../api/Usuario_bodega/putUsuario_bodega";
-import { deleteUsuarioBodega } from "../../api/Usuario_bodega/deleteUsuario_bodega";
-import { GetUsuarioBodega } from "../../types/Usuario_bodega/GetUsuario_bodega";
+import { 
+  getUsuarioBodegas, 
+  getUsuarioBodegaById, 
+  postUsuarioBodega, 
+  updateUsuarioBodega, 
+  deleteUsuarioBodega 
+} from "../../api/Usuario_bodega";
+import { UsuarioBodega } from "../../types/Usuario_bodega/UsuarioBodega";
+import { UsuarioBodegaPostData } from "../../types/Usuario_bodega/UsuarioBodegaPost";
+import { UsuarioBodegaPutData } from "../../types/Usuario_bodega/UsuarioBodegaPut";
+import { UsuarioBodegaResponse } from "../../types/Usuario_bodega/UsuarioBodegaResponse";
 
 export function useUsuarioBodega() {
   const queryClient = useQueryClient();
 
-  const { data, isLoading, isError } = useQuery<GetUsuarioBodega[]>({
-    queryKey: ["usuariosBodega"],
-    queryFn: getUsuarioBodega,
+  const usuarioBodegasQuery = useQuery<UsuarioBodega[]>({
+    queryKey: ["usuarioBodegas"],
+    queryFn: getUsuarioBodegas,
   });
 
-  const crearUsuarioBodega = useMutation({
-    mutationFn: (data: UsuarioBodegaPostData) => postUsuarioBodega(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["usuariosBodega"] });
-    },
+  const getUsuarioBodegaByIdQuery = (id: number) =>
+    useQuery<UsuarioBodega>({
+      queryKey: ["usuarioBodegas", id],
+      queryFn: () => getUsuarioBodegaById(id),
+      enabled: !!id,
+    });
+
+  const crearUsuarioBodega = useMutation<UsuarioBodegaResponse, Error, UsuarioBodegaPostData>({
+    mutationFn: postUsuarioBodega,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["usuarioBodegas"] }),
   });
 
-  const actualizarUsuarioBodega = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: UsuarioBodegaPutData }) =>
-      updateUsuarioBodega(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["usuariosBodega"] });
-    },
+  const actualizarUsuarioBodega = useMutation<UsuarioBodegaResponse, Error, { id: number; data: UsuarioBodegaPutData }>({
+    mutationFn: ({ id, data }) => updateUsuarioBodega(id, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["usuarioBodegas"] }),
   });
 
-  const eliminarUsuarioBodega = useMutation({
-    mutationFn: (id: number) => deleteUsuarioBodega(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["usuariosBodega"] });
-    },
+  const eliminarUsuarioBodega = useMutation<{ message: string }, Error, number>({
+    mutationFn: deleteUsuarioBodega,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["usuarioBodegas"] }),
   });
 
   return {
-    usuariosBodega: data ?? [],
-    isLoading,
-    isError,
+    usuarioBodegas: usuarioBodegasQuery.data ?? [],
+    isLoading: usuarioBodegasQuery.isLoading,
+    isError: usuarioBodegasQuery.isError,
+    getUsuarioBodegaByIdQuery,
     crearUsuarioBodega,
     actualizarUsuarioBodega,
     eliminarUsuarioBodega,

@@ -1,7 +1,7 @@
 import { BodegaElemento } from "../bodegaElemento/BodegaElemento";
-import { Usuario } from "../../types/usuarios/Usuario";
+import { Usuario } from "../../types/Usuarios/Usuario";
 import { Sede } from "../../types/Sedes/Sede";
-import { UsuarioBodega } from "../../types/UsuarioBodega/UsuarioBodega";
+import { UsuarioBodega } from "../../types/Usuario_bodega/UsuarioBodega";
 
 export type Bodega = {
   idBodega: number;

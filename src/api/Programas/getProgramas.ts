@@ -1,7 +1,7 @@
 import { api } from "../../lib/axios";
-import { GetPrograma } from "../../types/Programas/GetPrograma";
+import { ProgramasResponse } from "../../types/Programas/ProgramaResponse";
 
-export const getPrograma = async (): Promise<GetPrograma[]> => {
+export const getProgramas = async (): Promise<ProgramasResponse> => {
   const response = await api.get("/programas");
-  return response.data.data;
+  return response.data;
 };

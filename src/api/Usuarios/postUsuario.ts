@@ -1,15 +1,8 @@
 import { api } from "../../lib/axios";
+import { UsuarioPostData } from "../../types/Usuarios/UsuarioPost";
+import { UsuarioResponse } from "../../types/Usuarios/UsuarioResponse";
 
-export interface UsuarioPostData {
-  nombres: string;
-  apellidos: string;
-  correo: string;
-  password: string;
-  fkIdArea: number | null;
-  fkIdRol: number | null;
-}
-
-export async function postUsuario(data: UsuarioPostData) {
+export const postUsuario = async (data: UsuarioPostData): Promise<UsuarioResponse> => {
   const response = await api.post("/usuarios", data);
   return response.data;
-}
+};

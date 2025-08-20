@@ -1,44 +1,45 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getSede } from "../../api/Sedes/getSedes";
-import { postSede, SedePostData } from "../../api/Sedes/postSede";
-import { updateSede, SedePutData } from "../../api/Sedes/putSede";
-import { deleteSede } from "../../api/Sedes/deleteSede";
-import { GetSede } from "../../types/Sedes/GetSede";
+import { getSedes, getSedeById, postSede, updateSede, deleteSede } from "../../api/Sedes";
+import { Sede } from "../../types/Sedes/Sede";
+import { SedePostData } from "../../types/Sedes/SedePost";
+import { SedePutData } from "../../types/Sedes/SedePut";
+import { SedeResponse } from "../../types/Sedes/SedeResponse";
 
 export function useSedes() {
   const queryClient = useQueryClient();
 
-  const { data, isLoading, isError } = useQuery<GetSede[]>({
+  const sedesQuery = useQuery<Sede[]>({
     queryKey: ["sedes"],
-    queryFn: getSede,
+    queryFn: getSedes,
   });
 
-  const crearSede = useMutation({
-    mutationFn: (data: SedePostData) => postSede(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["sedes"] });
-    },
+  const getSedeByIdQuery = (id: number) =>
+    useQuery<Sede>({
+      queryKey: ["sedes", id],
+      queryFn: () => getSedeById(id),
+      enabled: !!id,
+    });
+
+  const crearSede = useMutation<SedeResponse, Error, SedePostData>({
+    mutationFn: postSede,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["sedes"] }),
   });
 
-  const actualizarSede = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: SedePutData }) =>
-      updateSede(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["sedes"] });
-    },
+  const actualizarSede = useMutation<SedeResponse, Error, { id: number; data: SedePutData }>({
+    mutationFn: ({ id, data }) => updateSede(id, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["sedes"] }),
   });
 
-  const eliminarSede = useMutation({
-    mutationFn: (id: number) => deleteSede(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["sedes"] });
-    },
+  const eliminarSede = useMutation<{ message: string }, Error, number>({
+    mutationFn: deleteSede,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["sedes"] }),
   });
 
   return {
-    sedes: data ?? [],
-    isLoading,
-    isError,
+    sedes: sedesQuery.data ?? [],
+    isLoading: sedesQuery.isLoading,
+    isError: sedesQuery.isError,
+    getSedeByIdQuery,
     crearSede,
     actualizarSede,
     eliminarSede,
