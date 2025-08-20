@@ -14,6 +14,7 @@ import AprobarSolicitudContent from "./AprobarSolicitudContent";
 import BarraBusqueda from "../molecules/BarraBusqueda";
 import { Area } from "../../../types/Areas/Area"; 
 import FormArea from "./FormArea";
+import EliminarItemContent from "./Eliminar";
 
 type AreasTableProps = {
   titulo: string;
@@ -92,22 +93,7 @@ export default function AreasTable({ titulo, data }: AreasTableProps) {
                     {/* Modal Detalle */}
                     <CustomModal
                       content={
-                        <FormSoli
-                          usuario={{
-                            nombre: "Andres",
-                            correo: "maria.garcia@empresa.com",
-                          }}
-                          producto={{
-                            nombre: "Laptop UltraBook Pro",
-                            categoria: "TIC",
-                          }}
-                          fechaSolicitud="14/1/2024"
-                          fechaDevolucion="21/1/2024"
-                          estado="Pendiente"
-                          prioridad="Alta"
-                          motivo="Presentación cliente importante"
-                          comentarios="Necesito urgentemente para presentación con cliente el viernes."
-                          codigoSolicitud="ssss"
+                        <FormArea
                         />
                       }
                       title="Detalle de Solicitud"
@@ -135,9 +121,13 @@ export default function AreasTable({ titulo, data }: AreasTableProps) {
                     {/* Modal Aprobar */}
                     <CustomModal
                       content={
-                        <AprobarSolicitudContent codigoSolicitud="ssss" />
+                        <EliminarItemContent
+  title="Area"
+  itemName="Juan Pérez"
+  warningMessage="Se perderán todos los datos asociados a la area."
+/> 
                       }
-                      title="Aprobar Solicitud"
+                      title="Eliminar Area"
                       cancelLabel="Cancelar"
                       confirmLabel="Aprobar"
                       ButtonLabel=""
