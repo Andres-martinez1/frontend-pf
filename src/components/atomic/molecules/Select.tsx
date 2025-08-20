@@ -13,10 +13,11 @@ type CustomSelectProps = {
   variant?: "flat" | "bordered" | "faded" | "underlined";
   color?: "default" | "primary" | "secondary" | "success" | "warning" | "danger";
   size?: "sm" | "md" | "lg";
+  width?: string; 
   radius?: "none" | "sm" | "md" | "lg" | "full";
   labelPlacement?: "inside" | "outside" | "outside-left";
   onChange?: (value: string) => void;
-  disabled?: boolean; 
+  disabled?: boolean;
 };
 
 export default function CustomSelect({
@@ -30,11 +31,13 @@ export default function CustomSelect({
   radius = "md",
   labelPlacement = "inside",
   onChange,
-  disabled = false, 
+  width = "full",
+  disabled = false,
 }: CustomSelectProps) {
   return (
     <Select
       className="max-w-xs"
+      style={{ width }}
       items={items}
       label={titulo}
       placeholder={planceholder}
@@ -44,7 +47,7 @@ export default function CustomSelect({
       size={size}
       radius={radius}
       labelPlacement={labelPlacement}
-      isDisabled={disabled} 
+      isDisabled={disabled}
       onChange={(e) => {
         const value = (e.target as HTMLSelectElement).value;
         onChange?.(value);

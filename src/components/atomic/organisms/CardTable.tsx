@@ -49,7 +49,7 @@ export default function CardTable({
           confirmBgColor="#1A1A36"
           cancelTextColor="#374151"
           confirmTextColor="#fff"
-          size="md"
+          size="full"
           radius="md"
           backdrop="opaque"
           placement="center"
