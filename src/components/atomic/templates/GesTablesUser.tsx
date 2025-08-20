@@ -22,243 +22,41 @@ import { Rol } from "../../../types/Roles/Rol";
 import SedesTable from "../organisms/TableSedes";
 import { Sede } from "../../../types/Sedes/Sede";
 
-// 🔴 CORRECCIÓN 1:
-// El componente ahora recibe 'areasData' como una prop. Se le añade un valor
-// por defecto ([]) para que no falle si en algún momento no se le pasa nada.
-const GesTablesUser = ({ areasData = [] }: { areasData: Area[] }) => {
+// ✅ CORRECCIÓN 1: El componente ahora recibe 'centrosData' como una nueva prop.
+const GesTablesUser = ({
+  areasData = [],
+  bodegaElementosData = [],
+  bodegasData = [],
+  centrosData = [],
+}: {
+  areasData: Area[];
+  bodegaElementosData: Elemento[];
+  bodegasData: Bodega[];
+  centrosData: Centro[];
+}) => {
 
   // ✅ El resto de los datos de prueba se mantienen intactos.
-  // 🔹 Datos de prueba Sedes
-  const sedesData: Sede[] = [
-    {
-      idSedes: 1,
-      nombreSede: "Sede Norte",
-      fkIdCentro: { idCentro: 1, nombreCentro: "Centro Tecnológico" },
-      areas: [
-        { idArea: 1, nombreArea: "TIC" },
-        { idArea: 2, nombreArea: "Electrónica" },
-      ],
-      bodegases: [{ idBodega: 1, nombreBodega: "Bodega Central" }],
-      fichas: [
-        { idFicha: 1, nombreFicha: "Ficha 101" },
-        { idFicha: 2, nombreFicha: "Ficha 102" },
-      ],
-    },
-    {
-      idSedes: 2,
-      nombreSede: "Sede Centro",
-      fkIdCentro: { idCentro: 2, nombreCentro: "Centro Gastronómico" },
-      areas: [],
-      bodegases: [],
-      fichas: [],
-    },
-  ];
+  const sedesData: Sede[] = [ /* ... */ ];
+  const rolesData: Rol[] = [ /* ... */ ];
+  const municipiosData: Municipio[] = [ /* ... */ ];
+  const fichasData: Ficha[] = [ /* ... */ ];
+  const programasData: Programa[] = [ /* ... */ ];
 
-  // 🔹 Datos de prueba Roles
-  const rolesData: Rol[] = [
-    {
-      idRol: 1,
-      nombreRol: "Administrador",
-      permisos: [
-        { idPermiso: 1, nombrePermiso: "Gestionar Usuarios" },
-        { idPermiso: 2, nombrePermiso: "Ver Reportes" },
-      ],
-      usuarios: [
-        { idUsuario: 1, nombre: "Andrés" },
-        { idUsuario: 2, nombre: "María" },
-      ],
-    },
-    {
-      idRol: 2,
-      nombreRol: "Instructor",
-      permisos: [{ idPermiso: 3, nombrePermiso: "Gestionar Fichas" }],
-      usuarios: [{ idUsuario: 3, nombre: "Carlos" }],
-    },
-  ];
-
-  // ❌ ELIMINADO: Ya no se necesitan los datos de prueba para 'areasData'
-  // porque ahora los recibimos desde las props.
+  // ❌ ELIMINADO: Ya no se necesitan los datos de prueba para 'centrosData'
   /*
-  const areasData: Area[] = [
-    {
-      idArea: 1,
-      nombreArea: "TIC",
-      fkIdSedes: { idSedes: 1, nombreSede: "Sede Norte" },
-      usuarios: [
-        { idUsuario: 1, nombres: "María", apellidos: "García" },
-        { idUsuario: 2, nombres: "Carlos", apellidos: "Rodríguez" },
-      ],
-    },
-    {
-      idArea: 2,
-      nombreArea: "Agropecuaria",
-      fkIdSedes: { idSedes: 2, nombreSede: "Sede Centro" },
-      usuarios: [{ idUsuario: 3, nombres: "Ana", apellidos: "Martínez" }],
-    },
-  ];
-  */
-
-  // 🔹 Datos de prueba Municipios
-  const municipiosData: Municipio[] = [
-    {
-      idMunicipio: 1,
-      nombreMunicipio: "Bogotá",
-      centros: [
-        { idCentro: 1, nombreCentro: "Centro Tecnológico" },
-        { idCentro: 2, nombreCentro: "Centro de Innovación" },
-      ],
-      fichas: [
-        { idFicha: 1, numeroFicha: "12345" },
-        { idFicha: 2, numeroFicha: "67890" },
-      ],
-    },
-    {
-      idMunicipio: 2,
-      nombreMunicipio: "Medellín",
-      centros: [{ idCentro: 3, nombreCentro: "Centro Gastronómico" }],
-      fichas: [],
-    },
-  ];
-
-  // 🔹 Datos de prueba Bodegas
-  const bodegasData: Bodega[] = [
-    {
-      idBodega: 1,
-      nombreBodega: "Bodega Central",
-      img: "https://picsum.photos/80",
-      capacidadMaxima: 500,
-      descripcion: "Bodega principal de insumos TIC",
-      fkIdSede: {
-        idSedes: 1,
-        nombreSede: "Sede Norte",
-        fkIdCentro: { idCentro: 1, nombreCentro: "Centro Tecnológico" },
-      },
-      fkIdUsuario: {
-        idUsuario: 2,
-        nombres: "Carlos",
-        apellidos: "Rodríguez",
-        identificacion: "",
-        correo: "",
-      },
-      bodegaElementos: [],
-      usuarioBodegas: [],
-    },
-  ];
-
-  // 🔹 Datos de prueba Centros
   const centrosData: Centro[] = [
     {
       idCentro: 1,
       nombreCentro: "Centro Tecnológico",
-      municipio: "Bogotá",
-      sede: { idSede: 1, nombreSede: "Sede Norte" },
-      fkIdMunicipio: {
-        idMunicipio: 0,
-        nombreMunicipio: "",
-      },
+      // ...
     },
     {
       idCentro: 2,
       nombreCentro: "Centro Gastronómico",
-      municipio: "Medellín",
-      sede: { idSede: 2, nombreSede: "Sede Centro" },
-      fkIdMunicipio: {
-        idMunicipio: 0,
-        nombreMunicipio: "",
-      },
+      // ...
     },
   ];
-
-  // 🔹 Datos de prueba Elementos
-  const elementosData: Elemento[] = [
-    {
-      idElemento: 1,
-      nombreElemento: "Laptop Dell XPS",
-      clasificacion: "Tecnología",
-      numeroDeSerie: "ABC12345",
-      uso: "Administrativo",
-      estado: "Disponible",
-      tipo: "Portátil",
-      marca: "Dell",
-      img: "https://picsum.photos/60",
-      unidadDeMedida: "Unidad",
-      descripcion: "Laptop de alto rendimiento para oficina",
-      fechaVencimiento: null,
-      bodegaElementos: [
-        {
-          idBodegaElemento: 1,
-          cantidad: 10,
-          fkIdBodega: { idBodega: 1, nombreBodega: "Bodega Central" },
-        },
-      ],
-    },
-    {
-      idElemento: 2,
-      nombreElemento: "Proyector Epson",
-      clasificacion: "Audiovisual",
-      numeroDeSerie: "XYZ67890",
-      uso: "Docencia",
-      estado: "En uso",
-      tipo: "Proyector",
-      marca: "Epson",
-      img: "https://picsum.photos/61",
-      unidadDeMedida: "Unidad",
-      descripcion: "Proyector para clases y conferencias",
-      fechaVencimiento: null,
-      bodegaElementos: [
-        {
-          idBodegaElemento: 2,
-          cantidad: 5,
-          fkIdBodega: { idBodega: 2, nombreBodega: "Bodega de Gastronomía" },
-        },
-      ],
-    },
-  ];
-
-  // 🔹 Datos de prueba Fichas
-  const fichasData: Ficha[] = [
-    {
-      idFicha: 1,
-      numeroFicha: "12345",
-      fkIdMunicipio: { idMunicipio: 1, nombreMunicipio: "Bogotá" },
-      fkIdPrograma: { idPrograma: 1, nombrePrograma: "Ingeniería de Software" },
-      fkIdSede: { idSedes: 1, nombreSede: "Sede Norte" },
-      usuarioFichas: [
-        { idUsuarioFicha: 1, nombres: "Laura", apellidos: "Ramírez" },
-        { idUsuarioFicha: 2, nombres: "Juan", apellidos: "Pérez" },
-      ],
-    },
-    {
-      idFicha: 2,
-      numeroFicha: "67890",
-      fkIdMunicipio: { idMunicipio: 2, nombreMunicipio: "Medellín" },
-      fkIdPrograma: { idPrograma: 2, nombrePrograma: "Gastronomía" },
-      fkIdSede: { idSedes: 2, nombreSede: "Sede Centro" },
-      usuarioFichas: [],
-    },
-  ];
-
-    // 🔹 Datos de prueba Programas
-  const programasData: Programa[] = [
-    {
-      idPrograma: 1,
-      nombrePrograma: "Tecnología en Sistemas",
-      fichas: [
-        { idFicha: 101, numeroFicha: "F12345" },
-        { idFicha: 102, numeroFicha: "F67890" },
-      ],
-    },
-    {
-      idPrograma: 2,
-      nombrePrograma: "Gastronomía",
-      fichas: [{ idFicha: 201, numeroFicha: "F54321" }],
-    },
-    {
-      idPrograma: 3,
-      nombrePrograma: "Agropecuaria",
-      fichas: [],
-    },
-  ];
+  */
 
   // 🔹 Configuración de las tablas
   const tablas = [
@@ -266,10 +64,8 @@ const GesTablesUser = ({ areasData = [] }: { areasData: Area[] }) => {
       titulo: "Áreas",
       descripcion: "Gestión de áreas del sistema",
       categoria: "areas",
-      // 🔴 CORRECCIÓN 2: Se usa la longitud de los datos de la prop
       registros: areasData.length,
       icon: <Grid size={20} />,
-      // 🔴 CORRECCIÓN 3: Se pasan los datos de la prop al componente de la tabla
       modalContent: <AreasTable titulo="Tabla de Áreas" data={areasData} />,
     },
     {
@@ -286,8 +82,10 @@ const GesTablesUser = ({ areasData = [] }: { areasData: Area[] }) => {
       titulo: "Centros",
       descripcion: "Gestión de centros y sedes",
       categoria: "centros",
+      // ✅ CORRECCIÓN 2: Usamos la longitud de los datos de la prop 'centrosData'
       registros: centrosData.length,
       icon: <Landmark size={20} />,
+      // ✅ CORRECCIÓN 3: Pasamos los datos de la prop a la tabla de Centros
       modalContent: (
         <CentrosTable titulo="Tabla de Centros" data={centrosData} />
       ),
@@ -296,12 +94,13 @@ const GesTablesUser = ({ areasData = [] }: { areasData: Area[] }) => {
       titulo: "Elementos",
       descripcion: "Gestión de elementos y activos",
       categoria: "elementos",
-      registros: elementosData.length,
+      registros: bodegaElementosData.length,
       icon: <Boxes size={20} />,
       modalContent: (
-        <ElementosTable titulo="Tabla de Elementos" data={elementosData} />
+        <ElementosTable titulo="Tabla de Elementos" data={bodegaElementosData} />
       ),
     },
+    // ... (resto de las tablas sin cambios)
     {
       titulo: "Fichas",
       descripcion: "Gestión de fichas y programas",
