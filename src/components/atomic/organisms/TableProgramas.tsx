@@ -7,35 +7,51 @@ import {
   TableCell,
 } from "@heroui/table";
 import { Tooltip } from "@heroui/tooltip";
-import { EyeIcon, CheckIcon } from "lucide-react";
+import { EyeIcon, CheckIcon, Plus } from "lucide-react";
 import CustomModal from "../molecules/Modal";
 import FormSoli from "./SolicitudDetalle";
 import AprobarSolicitudContent from "./AprobarSolicitudContent";
 import BarraBusqueda from "../molecules/BarraBusqueda";
+import { Programa } from "../../../types/Programas/Programa";
+import FormPrograma from "./FormProgramas";
+
 
 type ProgramasTableProps = {
   titulo: string;
-  data: (string | number)[][];
+  data: Programa[];
 };
 
-export default function ProgramasTable({
-  titulo,
-  data,
-}: ProgramasTableProps) {
-  const columns = [
-    "ID",
-    "Nombre Programa",
-    "Ficha",
-    "Acciones",
-  ];
+export default function ProgramasTable({ titulo, data }: ProgramasTableProps) {
+  const columns = ["ID", "Nombre Programa", "Fichas", "Acciones"];
 
   return (
     <div className="bg-white shadow-2xl rounded-3xl p-4 w-auto border border-gray-300">
       <h1 className="text-2xl font-bold mb-5">{titulo}</h1>
+
+      <div className="flex justify-between items-center mb-4">
+        <BarraBusqueda />
+        <CustomModal
+                  content={<FormPrograma></FormPrograma>}
+                  title="Nuevo Programa"
+                  ButtonLabel="Nuevo Programa"
+                  cancelLabel="Cancelar"
+                  confirmLabel="Guardar"
+                  cancelBgColor="gray"
+                  confirmBgColor="#1A1A36"
+                  cancelTextColor="white"
+                  confirmTextColor="white"
+                  size="xl"
+                  radius="lg"
+                  backdrop="opaque"
+                  placement="center"
+                  scrollBehavior="inside"
+                  shadow="lg"
+                  icon={<Plus className="w-5 h-5" />}
+                />
+      </div>
+
       <div className="overflow-x-auto">
-        <BarraBusqueda></BarraBusqueda>
-        <CustomModal content={undefined} title={""} cancelLabel={""} confirmLabel={""} cancelBgColor={""} confirmBgColor={""} cancelTextColor={""} confirmTextColor={""} size={"4xl"} radius={"sm"} backdrop={"transparent"} placement={"center"} scrollBehavior={"inside"} shadow={"sm"}></CustomModal>
-        <Table aria-label="Tabla de Areas" removeWrapper>
+        <Table aria-label="Tabla de Programas" removeWrapper>
           <TableHeader>
             {columns.map((col, index) => (
               <TableColumn
@@ -47,20 +63,34 @@ export default function ProgramasTable({
             ))}
           </TableHeader>
           <TableBody>
-            {data.map((row, rowIndex) => (
+            {data.map((programa) => (
               <TableRow
-                key={rowIndex}
+                key={programa.idPrograma}
                 className="hover:bg-gray-100 transition-colors duration-200"
               >
-                <TableCell>{row[0]}</TableCell>
+                {/* ID */}
+                <TableCell>{programa.idPrograma}</TableCell>
+
+                {/* Nombre */}
+                <TableCell>{programa.nombrePrograma}</TableCell>
+
+                {/* Fichas asociadas */}
                 <TableCell>
-                  <div className="font-semibold">{row[1]}</div>
+                  {programa.fichas && programa.fichas.length > 0 ? (
+                    <ul>
+                      {programa.fichas.map((ficha) => (
+                        <li key={ficha.idFicha}>{ficha.numeroFicha}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <span className="text-gray-400">Sin fichas</span>
+                  )}
                 </TableCell>
-                <TableCell>{row[2]}</TableCell>
-                <TableCell>{row[3]}</TableCell>
-               <TableCell>{row[4]}</TableCell>
+
+                {/* Acciones */}
                 <TableCell>
                   <div className="flex items-center gap-2">
+                    {/* Ver Detalle */}
                     <CustomModal
                       content={
                         <FormSoli
@@ -78,7 +108,7 @@ export default function ProgramasTable({
                           prioridad="Alta"
                           motivo="Presentación cliente importante"
                           comentarios="Necesito urgentemente para presentación con cliente el viernes."
-                          codigoSolicitud={"ssss"}
+                          codigoSolicitud="ssss"
                         />
                       }
                       title="Detalle de Solicitud"
@@ -97,16 +127,15 @@ export default function ProgramasTable({
                       scrollBehavior="inside"
                       shadow="lg"
                       trigger={
-                        <Tooltip content="Editar">
+                        <Tooltip content="Ver Detalle">
                           <EyeIcon className="w-6 h-6 text-gray-500 hover:text-blue-500 border rounded-md" />
                         </Tooltip>
                       }
                     />
 
+                    {/* Aprobar */}
                     <CustomModal
-                      content={
-                        <AprobarSolicitudContent codigoSolicitud="ssss" />
-                      }
+                      content={<AprobarSolicitudContent codigoSolicitud="ssss" />}
                       title="Aprobar Solicitud"
                       cancelLabel="Cancelar"
                       confirmLabel="Aprobar"
@@ -124,12 +153,11 @@ export default function ProgramasTable({
                       scrollBehavior="inside"
                       shadow="lg"
                       trigger={
-                        <Tooltip content="Eliminar">
-                          <CheckIcon className="w-6 h-6 text-gray-500 hover:text-blue-500 border rounded-md" />
+                        <Tooltip content="Aprobar">
+                          <CheckIcon className="w-6 h-6 text-gray-500 hover:text-green-600 border rounded-md" />
                         </Tooltip>
                       }
                     />
-
                   </div>
                 </TableCell>
               </TableRow>

@@ -7,36 +7,52 @@ import {
   TableCell,
 } from "@heroui/table";
 import { Tooltip } from "@heroui/tooltip";
-import { EyeIcon, CheckIcon } from "lucide-react";
+import { EyeIcon, CheckIcon, Plus } from "lucide-react";
 import CustomModal from "../molecules/Modal";
 import FormSoli from "./SolicitudDetalle";
 import AprobarSolicitudContent from "./AprobarSolicitudContent";
 import BarraBusqueda from "../molecules/BarraBusqueda";
+import { Municipio } from "../../../types/Municipios/Municipio";
+import FormMunicipio from "./FormMunicipio";
 
 type MunicipioTableProps = {
   titulo: string;
-  data: (string | number)[][];
+  data: Municipio[];
 };
 
-export default function MunicipioTable({
-  titulo,
-  data,
-}: MunicipioTableProps) {
-  const columns = [
-    "ID",
-    "Nombre Municipio",
-    "Centros",
-    "Ficha",
-    "Acciones",
-  ];
+export default function MunicipioTable({ titulo, data }: MunicipioTableProps) {
+  const columns = ["ID", "Nombre Municipio", "Centros", "Fichas", "Acciones"];
 
   return (
     <div className="bg-white shadow-2xl rounded-3xl p-4 w-auto border border-gray-300">
       <h1 className="text-2xl font-bold mb-5">{titulo}</h1>
+
+      <div className="flex justify-between items-center mb-4">
+        <BarraBusqueda />
+        {/* Botón para Nuevo Municipio */}
+        <CustomModal
+          content={<FormMunicipio></FormMunicipio>}
+          title="Nuevo Municipio"
+          ButtonLabel="Nuevo Municipio"
+          cancelLabel="Cancelar"
+          confirmLabel="Guardar"
+          cancelBgColor="gray"
+          confirmBgColor="#1A1A36"
+          cancelTextColor="white"
+          confirmTextColor="white"
+          size="xl"
+          radius="lg"
+          backdrop="opaque"
+          placement="center"
+          scrollBehavior="inside"
+          shadow="lg"
+          icon={<Plus className="w-5 h-5" />}
+
+        />
+      </div>
+
       <div className="overflow-x-auto">
-        <BarraBusqueda></BarraBusqueda>
-        <CustomModal content={undefined} title={""} cancelLabel={""} confirmLabel={""} cancelBgColor={""} confirmBgColor={""} cancelTextColor={""} confirmTextColor={""} size={"4xl"} radius={"sm"} backdrop={"transparent"} placement={"center"} scrollBehavior={"inside"} shadow={"sm"}></CustomModal>
-        <Table aria-label="Tabla de Areas" removeWrapper>
+        <Table aria-label="Tabla de Municipios" removeWrapper>
           <TableHeader>
             {columns.map((col, index) => (
               <TableColumn
@@ -48,20 +64,49 @@ export default function MunicipioTable({
             ))}
           </TableHeader>
           <TableBody>
-            {data.map((row, rowIndex) => (
+            {data.map((municipio) => (
               <TableRow
-                key={rowIndex}
+                key={municipio.idMunicipio}
                 className="hover:bg-gray-100 transition-colors duration-200"
               >
-                <TableCell>{row[0]}</TableCell>
+                {/* ID */}
+                <TableCell>{municipio.idMunicipio}</TableCell>
+
+                {/* Nombre */}
                 <TableCell>
-                  <div className="font-semibold">{row[1]}</div>
+                  {municipio.nombreMunicipio}
                 </TableCell>
-                <TableCell>{row[2]}</TableCell>
-                <TableCell>{row[3]}</TableCell>
-                <TableCell>{row[4]}</TableCell>
+
+                {/* Centros */}
+                <TableCell>
+                  {municipio.centros && municipio.centros.length > 0 ? (
+                    <ul>
+                      {municipio.centros.map((c) => (
+                        <li key={c.idCentro}>{c.nombreCentro}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <span className="text-gray-400">Sin Centros</span>
+                  )}
+                </TableCell>
+
+                {/* Fichas */}
+                <TableCell>
+                  {municipio.fichas && municipio.fichas.length > 0 ? (
+                    <ul>
+                      {municipio.fichas.map((f) => (
+                        <li key={f.idFicha}>{f.numeroFicha}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <span className="text-gray-400">Sin Fichas</span>
+                  )}
+                </TableCell>
+
+                {/* Acciones */}
                 <TableCell>
                   <div className="flex items-center gap-2">
+                    {/* Ver Detalle */}
                     <CustomModal
                       content={
                         <FormSoli
@@ -79,7 +124,7 @@ export default function MunicipioTable({
                           prioridad="Alta"
                           motivo="Presentación cliente importante"
                           comentarios="Necesito urgentemente para presentación con cliente el viernes."
-                          codigoSolicitud={"ssss"}
+                          codigoSolicitud="ssss"
                         />
                       }
                       title="Detalle de Solicitud"
@@ -98,16 +143,15 @@ export default function MunicipioTable({
                       scrollBehavior="inside"
                       shadow="lg"
                       trigger={
-                        <Tooltip content="Editar">
+                        <Tooltip content="Ver Detalle">
                           <EyeIcon className="w-6 h-6 text-gray-500 hover:text-blue-500 border rounded-md" />
                         </Tooltip>
                       }
                     />
 
+                    {/* Aprobar */}
                     <CustomModal
-                      content={
-                        <AprobarSolicitudContent codigoSolicitud="ssss" />
-                      }
+                      content={<AprobarSolicitudContent codigoSolicitud="ssss" />}
                       title="Aprobar Solicitud"
                       cancelLabel="Cancelar"
                       confirmLabel="Aprobar"
@@ -125,12 +169,11 @@ export default function MunicipioTable({
                       scrollBehavior="inside"
                       shadow="lg"
                       trigger={
-                        <Tooltip content="Eliminar">
-                          <CheckIcon className="w-6 h-6 text-gray-500 hover:text-blue-500 border rounded-md" />
+                        <Tooltip content="Aprobar">
+                          <CheckIcon className="w-6 h-6 text-gray-500 hover:text-green-600 border rounded-md" />
                         </Tooltip>
                       }
                     />
-
                   </div>
                 </TableCell>
               </TableRow>

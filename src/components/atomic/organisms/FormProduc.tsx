@@ -2,64 +2,165 @@ import CustomInput from "../molecules/Input";
 import CustomSelect from "../molecules/Select";
 import CustomTextarea from "../molecules/Textarea";
 
-export default function FormProducto() {
-  const categorias = [
-    { label: "Audio", value: "audio" },
-    { label: "Fotografía", value: "fotografia" },
-    { label: "Computación", value: "computacion" },
-    { label: "Audiovisual", value: "audiovisual" },
-    { label: "Electrónica", value: "electronica" },
+export default function FormElemento() {
+  const clasificaciones = [
+    { label: "Herramienta", value: "Herramienta" },
+    { label: "Material", value: "Material" },
+    { label: "Equipo", value: "Equipo" },
+  ];
+
+  const estados = [
+    { label: "Nuevo", value: "Nuevo" },
+    { label: "Usado", value: "Usado" },
+    { label: "Dañado", value: "Dañado" },
+  ];
+
+  const tipos = [
+    { label: "Eléctrico", value: "Eléctrico" },
+    { label: "Mecánico", value: "Mecánico" },
+    { label: "Otro", value: "Otro" },
+  ];
+
+  const unidades = [
+    { label: "Unidad", value: "Unidad" },
+    { label: "Caja", value: "Caja" },
+    { label: "Paquete", value: "Paquete" },
+    { label: "Litros", value: "Litros" },
+  ];
+
+  const bodegas = [
+    { label: "Bodega Principal", value: "1" },
+    { label: "Bodega Norte", value: "2" },
+    { label: "Bodega Sur", value: "3" },
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div className="flex flex-col">
-        <label className="text-sm font-medium mb-1">Nombre del Producto</label>
-        <CustomInput label="Nombre del Producto" type="text" width="full"/>
-      </div>
+    <form className="space-y-6 w-full max-w-4xl mx-auto">
+      {/* Primera fila */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <CustomInput
+          label="Nombre del Elemento"
+          type="text"
+          placeholder="Ej: Taladro eléctrico"
+          width="100%"
+        />
 
-      <div className="flex flex-col">
-        <label className="text-sm font-medium mb-1">Categoría</label>
         <CustomSelect
-          titulo="Categoría"
-          planceholder="Seleccionar categoría"
-          items={categorias}
+          titulo="Clasificación"
+          planceholder="Seleccionar clasificación"
+          items={clasificaciones}
           selectionMode="single"
+          onChange={(value) => console.log("Clasificación seleccionada:", value)}
+          variant="bordered"
+          size="md"
+          radius="md"
         />
       </div>
 
-      <div className="md:col-span-2 flex flex-col">
-        <label className="text-sm font-medium mb-1">Descripción</label>
-        <CustomTextarea
-          placeholder="Ingresa una breve descripción del producto"
-          titulo="Descripción" className="w-full"
+      {/* Segunda fila */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <CustomInput
+          label="Número de Serie"
+          type="text"
+          placeholder="Ej: SN-12345"
+          width="100%"
+        />
+
+        <CustomSelect
+          titulo="Estado"
+          planceholder="Seleccionar estado"
+          items={estados}
+          selectionMode="single"
+          onChange={(value) => console.log("Estado seleccionado:", value)}
+          variant="bordered"
+          size="md"
+          radius="md"
         />
       </div>
 
-      <div className="flex flex-col">
-        <label className="text-sm font-medium mb-1">Stock</label>
-        <CustomInput label="Cantidad en Stock" type="number" width="full"/>
+      {/* Tercera fila */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <CustomSelect
+          titulo="Tipo"
+          planceholder="Seleccionar tipo"
+          items={tipos}
+          selectionMode="single"
+          onChange={(value) => console.log("Tipo seleccionado:", value)}
+          variant="bordered"
+          size="md"
+          radius="md"
+        />
+
+        <CustomInput
+          label="Marca"
+          type="text"
+          placeholder="Ej: Bosch"
+          width="100%"
+        />
       </div>
 
-      <div className="flex flex-col">
-        <label className="text-sm font-medium mb-1">Ubicación</label>
-        <CustomInput label="Ubicación" type="text"  width="full"/>
+      {/* Cuarta fila */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <CustomSelect
+          titulo="Unidad de Medida"
+          planceholder="Seleccionar unidad"
+          items={unidades}
+          selectionMode="single"
+          onChange={(value) => console.log("Unidad seleccionada:", value)}
+          variant="bordered"
+          size="md"
+          radius="md"
+        />
+
+        <CustomInput
+          label="Fecha de Vencimiento"
+          type="date"
+          placeholder="yyyy-mm-dd"
+          width="100%"
+        />
       </div>
 
-      <div className="flex flex-col">
-        <label className="text-sm font-medium mb-1">Número de Serie</label>
-        <CustomInput label="Número de Serie" type="text" width="full" />
+      {/* Quinta fila */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <CustomSelect
+          titulo="Bodega"
+          planceholder="Seleccionar bodega"
+          items={bodegas}
+          selectionMode="single"
+          onChange={(value) => console.log("Bodega seleccionada:", value)}
+          variant="bordered"
+          size="md"
+          radius="md"
+        />
+
+        <CustomInput
+          label="Cantidad"
+          type="number"
+          placeholder="Ej: 10"
+          width="100%"
+        />
       </div>
 
-      <div className="flex flex-col">
-        <label className="text-sm font-medium mb-1">Marca</label>
-        <CustomInput label="Marca" type="text" width="full"/>
-      </div>
+      {/* Descripción */}
+      <CustomTextarea
+        titulo="Descripción"
+        placeholder="Describe las características, uso o detalles adicionales del elemento..."
+      />
 
-      <div className="md:col-span-2 flex flex-col">
-        <label className="text-sm font-medium mb-1">Imagen del Producto</label>
-        <CustomInput type="file" className="w-full border px-3 py-2 rounded-lg" label={""} width="full" />
+      {/* Imagen */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700">
+          Imagen del Elemento
+        </label>
+        <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-300 px-6 py-10">
+          <div className="text-center">
+            <input type="file" accept="image/*" className="hidden" id="imagen" />
+            <label htmlFor="imagen" className="cursor-pointer text-blue-600">
+              Arrastra una imagen aquí o selecciona un archivo
+            </label>
+          </div>
+        </div>
       </div>
-    </div>
+    </form>
   );
 }

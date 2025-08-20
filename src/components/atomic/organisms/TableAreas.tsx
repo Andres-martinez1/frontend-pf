@@ -27,7 +27,6 @@ export default function AreasTable({ titulo, data }: AreasTableProps) {
     <div className="bg-white shadow-2xl rounded-3xl p-4 w-auto border border-gray-300">
       <h1 className="text-2xl font-bold mb-5">{titulo}</h1>
 
-      {/* 🔹 Barra de búsqueda + Botón Nueva Área con CustomModal */}
       <div className="flex justify-between items-center mb-4">
         <BarraBusqueda />
 

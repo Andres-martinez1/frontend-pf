@@ -1,4 +1,6 @@
 export type Centro = {
+  sede: any;
+  municipio: ReactNode;
   idCentro: number;
   nombreCentro: string;
   fkIdMunicipio: {

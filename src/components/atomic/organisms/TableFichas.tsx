@@ -7,46 +7,59 @@ import {
   TableCell,
 } from "@heroui/table";
 import { Tooltip } from "@heroui/tooltip";
-import { EyeIcon, CheckIcon } from "lucide-react";
+import { EyeIcon, CheckIcon, Plus } from "lucide-react";
 import CustomModal from "../molecules/Modal";
 import FormSoli from "./SolicitudDetalle";
 import AprobarSolicitudContent from "./AprobarSolicitudContent";
 import BarraBusqueda from "../molecules/BarraBusqueda";
+import { Ficha } from "../../../types/Ficha/Ficha";
+import FormFicha from "./FormFicha";
 
 type FichasTableProps = {
   titulo: string;
-  data: (string | number)[][];
+  data: Ficha[];
 };
 
-export default function FichasTable({
-  titulo,
-  data,
-}: FichasTableProps) {
+export default function FichasTable({ titulo, data }: FichasTableProps) {
   const columns = [
     "ID",
-    "NÚmero Ficha",
+    "Número Ficha",
     "Municipio",
-    "Progrma",
+    "Programa",
     "Sede",
     "Usuario Ficha",
     "Acciones",
   ];
 
-  const bodegaClasses: Record<string, string> = {
-    TIC: "bg-blue-100 text-blue-700 w-[100px]  border-1 border-blue-400",
-    Gastronomía: "bg-orange-100 text-orange-700 w-[100px] border-1 border-orange-400",
-    Agropecuaria: "bg-green-100 text-green-700 w-[100px] border-1 border-green-400",
-    Logística: "bg-purple-200 text-purple-700 w-[100px] border-1 border-purple-400",
-  };
-
-
   return (
     <div className="bg-white shadow-2xl rounded-3xl p-4 w-auto border border-gray-300">
       <h1 className="text-2xl font-bold mb-5">{titulo}</h1>
       <div className="overflow-x-auto">
-        <BarraBusqueda></BarraBusqueda>
-        <CustomModal content={undefined} title={""} cancelLabel={""} confirmLabel={""} cancelBgColor={""} confirmBgColor={""} cancelTextColor={""} confirmTextColor={""} size={"4xl"} radius={"sm"} backdrop={"transparent"} placement={"center"} scrollBehavior={"inside"} shadow={"sm"}></CustomModal>
-        <Table aria-label="Tabla de Areas" removeWrapper>
+        <div className="flex justify-between items-center mb-4">
+        <BarraBusqueda />
+        {/* Botón para agregar nuevo elemento (puedes conectar a tu FormElemento después) */}
+        <CustomModal
+          content={<FormFicha></FormFicha>}
+          title="Nueva Ficha"
+          ButtonLabel="Nueva Ficha"
+          cancelLabel="Cancelar"
+          confirmLabel="Guardar"
+          cancelBgColor="gray"
+          confirmBgColor="#1A1A36"
+          cancelTextColor="white"
+          confirmTextColor="white"
+          size="xl"
+          radius="lg"
+          backdrop="opaque"
+          placement="center"
+          scrollBehavior="inside"
+          shadow="lg"
+          icon={<Plus className="w-5 h-5" />}
+          
+        />
+      </div>
+
+        <Table aria-label="Tabla de Fichas" removeWrapper>
           <TableHeader>
             {columns.map((col, index) => (
               <TableColumn
@@ -58,29 +71,32 @@ export default function FichasTable({
             ))}
           </TableHeader>
           <TableBody>
-            {data.map((row, rowIndex) => (
+            {data.map((ficha) => (
               <TableRow
-                key={rowIndex}
+                key={ficha.idFicha}
                 className="hover:bg-gray-100 transition-colors duration-200"
               >
-                <TableCell>{row[0]}</TableCell>
+                <TableCell>{ficha.idFicha}</TableCell>
+                <TableCell>{ficha.numeroFicha}</TableCell>
+                <TableCell>{ficha.fkIdMunicipio.nombreMunicipio}</TableCell>
+                <TableCell>{ficha.fkIdPrograma.nombrePrograma}</TableCell>
+                <TableCell>{ficha.fkIdSede.nombreSede}</TableCell>
                 <TableCell>
-                  <div className="font-semibold">{row[1]}</div>
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs flex items-center gap-1 ${
-                      bodegaClasses[row[2] as string] ||
-                      "bg-gray-100 text-gray-700"
-                    }`}
-                  >
-                    {row[2]}
-                  </span>
+                  {ficha.usuarioFichas && ficha.usuarioFichas.length > 0 ? (
+                    <ul>
+                      {ficha.usuarioFichas.map((u) => (
+                        <li key={u.idUsuarioFicha}>
+                          {u.nombres} {u.apellidos}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <span className="text-gray-400">Sin usuarios</span>
+                  )}
                 </TableCell>
-                <TableCell>{row[3]}</TableCell>                 
-                <TableCell>{row[4]}</TableCell>                 
-                <TableCell>{row[5]}</TableCell>
-                <TableCell>{row[6]}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
+                    {/* Modal detalle */}
                     <CustomModal
                       content={
                         <FormSoli
@@ -117,16 +133,15 @@ export default function FichasTable({
                       scrollBehavior="inside"
                       shadow="lg"
                       trigger={
-                        <Tooltip content="Editar">
+                        <Tooltip content="Ver Detalle">
                           <EyeIcon className="w-6 h-6 text-gray-500 hover:text-blue-500 border rounded-md" />
                         </Tooltip>
                       }
                     />
 
+                    {/* Modal aprobar */}
                     <CustomModal
-                      content={
-                        <AprobarSolicitudContent codigoSolicitud="ssss" />
-                      }
+                      content={<AprobarSolicitudContent codigoSolicitud="ssss" />}
                       title="Aprobar Solicitud"
                       cancelLabel="Cancelar"
                       confirmLabel="Aprobar"
@@ -144,12 +159,11 @@ export default function FichasTable({
                       scrollBehavior="inside"
                       shadow="lg"
                       trigger={
-                        <Tooltip content="Eliminar">
-                          <CheckIcon className="w-6 h-6 text-gray-500 hover:text-blue-500 border rounded-md" />
+                        <Tooltip content="Aprobar">
+                          <CheckIcon className="w-6 h-6 text-gray-500 hover:text-green-600 border rounded-md" />
                         </Tooltip>
                       }
                     />
-
                   </div>
                 </TableCell>
               </TableRow>
