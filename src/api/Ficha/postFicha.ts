@@ -1,13 +1,8 @@
 import { api } from "../../lib/axios";
+import { FichaPostData } from "../../types/Ficha/FichaPost";
+import { FichaResponse } from "../../types/Ficha/FichaResponse";
 
-export interface FichaPostData {
-  numeroFicha: string;
-  fkIdMunicipio: number;
-  fkIdPrograma: number;
-  fkIdSede: number;
-}
-
-export async function postFicha(data: FichaPostData) {
-  const response = await api.post("/ficha", data);
-  return response.data;
-}
+export const postFicha = async (data: FichaPostData): Promise<FichaResponse> => {
+  const response = await api.post("/fichas", data);
+  return response.data.data;
+};

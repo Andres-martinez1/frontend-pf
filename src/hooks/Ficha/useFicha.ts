@@ -1,45 +1,45 @@
-// hooks/Fichas/useFicha.ts
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getFichas } from "../../api/Ficha/getFichas";
-import { postFicha, FichaPostData } from "../../api/Ficha/postFicha";
-import { updateFicha, FichaPutData } from "../../api/Ficha/putFicha";
-import { deleteFicha } from "../../api/Ficha/deleteFicha";
-import { GetFicha } from "../../types/Ficha/GetFicha";
+import { getFichas, getFichaById, postFicha, updateFicha, deleteFicha } from "../../api/Ficha";
+import { Ficha } from "../../types/Ficha/Ficha";
+import { FichaPostData } from "../../types/Ficha/FichaPost";
+import { FichaPutData } from "../../types/Ficha/FichaPut";
+import { FichaResponse } from "../../types/Ficha/FichaResponse";
 
-export function useFicha() {
+export function useFichas() {
   const queryClient = useQueryClient();
 
-  const { data, isLoading, isError } = useQuery<GetFicha[]>({
+  const fichasQuery = useQuery<Ficha[]>({
     queryKey: ["fichas"],
     queryFn: getFichas,
   });
 
-  const crearFicha = useMutation({
-    mutationFn: (data: FichaPostData) => postFicha(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["fichas"] });
-    },
+  const getFichaByIdQuery = (id: number) =>
+    useQuery<Ficha>({
+      queryKey: ["fichas", id],
+      queryFn: () => getFichaById(id),
+      enabled: !!id,
+    });
+
+  const crearFicha = useMutation<FichaResponse, Error, FichaPostData>({
+    mutationFn: postFicha,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["fichas"] }),
   });
 
-  const actualizarFicha = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: FichaPutData }) =>
-      updateFicha(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["fichas"] });
-    },
+  const actualizarFicha = useMutation<FichaResponse, Error, { id: number; data: FichaPutData }>({
+    mutationFn: ({ id, data }) => updateFicha(id, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["fichas"] }),
   });
 
-  const eliminarFicha = useMutation({
-    mutationFn: (id: number) => deleteFicha(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["fichas"] });
-    },
+  const eliminarFicha = useMutation<{ message: string }, Error, number>({
+    mutationFn: deleteFicha,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["fichas"] }),
   });
 
   return {
-    fichas: data ?? [],
-    isLoading,
-    isError,
+    fichas: fichasQuery.data ?? [],
+    isLoading: fichasQuery.isLoading,
+    isError: fichasQuery.isError,
+    getFichaByIdQuery,
     crearFicha,
     actualizarFicha,
     eliminarFicha,

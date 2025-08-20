@@ -1,16 +1,8 @@
 import { api } from "../../lib/axios";
+import { MovimientoPutData } from "../../types/Movimientos/MovimientoPut";
+import { MovimientoResponse } from "../../types/Movimientos/MovimientoResponse";
 
-export interface MovimientoPutData {
-  fecha: Date;
-  responsable: string;
-  pedir: string;
-  suministrar: string;
-  devolver: string;
-  fkIdElemento: number;
-  fkIdUsuario: number;
-}
-
-export async function updateMovimiento(id: number, data: MovimientoPutData) {
+export const updateMovimiento = async (id: number, data: MovimientoPutData): Promise<MovimientoResponse> => {
   const response = await api.put(`/movimientos/${id}`, data);
-  return response.data;
-}
+  return response.data.data;
+};

@@ -1,11 +1,8 @@
 import { api } from "../../lib/axios";
+import { CentroPostData } from "../../types/Centros/CentroPost";
+import { CentroResponse } from "../../types/Centros/CentroResponse";
 
-export interface CentroPostData {
-  nombreCentro: string;
-  fkIdMunicipio: number;
-}
-
-export async function postCentro(data: CentroPostData) {
+export const postCentro = async (data: CentroPostData): Promise<CentroResponse> => {
   const response = await api.post("/centros", data);
   return response.data;
-}
+};

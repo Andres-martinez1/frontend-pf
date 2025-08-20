@@ -1,7 +1,7 @@
 import { api } from "../../lib/axios";
-import { GetFicha } from "../../types/Ficha/GetFicha";
+import { FichasResponse } from "../../types/Ficha/FichaResponse";
 
-export const getFichas = async (): Promise<GetFicha[]> => {
-  const response = await api.get("/ficha");
-  return response.data.data;
+export const getFichas = async (): Promise<FichasResponse> => {
+  const response = await api.get("/fichas");
+  return response.data.data; 
 };

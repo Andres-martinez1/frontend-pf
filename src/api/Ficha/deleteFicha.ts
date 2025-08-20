@@ -1,6 +1,6 @@
 import { api } from "../../lib/axios";
 
-export async function deleteFicha(id: number) {
-  const response = await api.delete(`/ficha/${id}`);
+export const deleteFicha = async (id: number): Promise<{ message: string }> => {
+  const response = await api.delete(`/fichas/${id}`);
   return response.data;
-}
+};
