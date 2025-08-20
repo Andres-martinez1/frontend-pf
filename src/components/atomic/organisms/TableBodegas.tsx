@@ -52,7 +52,9 @@ export default function BodegasTable({ titulo, data }: BodegasTableProps) {
         <BarraBusqueda />
 
         <CustomModal
-          content={<FormBodega></FormBodega>}
+          content={<FormBodega open={false} onClose={function (): void {
+            throw new Error("Function not implemented.");
+          } }></FormBodega>}
           title="Nueva Bodega"
           ButtonLabel="Nueva Bodega"
           cancelLabel="Cancelar"

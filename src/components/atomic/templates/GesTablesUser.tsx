@@ -1,4 +1,4 @@
-import { Grid, Warehouse, Building, Package, ClipboardIcon, MapIcon, Book, Shield, MapPin } from "lucide-react";
+import { Grid, Warehouse } from "lucide-react";
 import CardTable from "../organisms/CardTable";
 import CardTitulo from "../organisms/CardTitulo";
 import { CircleStackIcon } from "@heroicons/react/16/solid";
@@ -7,79 +7,31 @@ import AreasTable from "../organisms/TableAreas";
 import { Area } from "../../../types/Areas/Area";
 import BodegasTable from "../organisms/Tablebodegas";
 
-const GesTablesUser = () => {
-  const areasData: Area[] = [
-    {
-      idArea: 1,
-      nombreArea: "TIC",
-      fkIdSedes: { idSedes: 1, nombreSede: "Sede Norte" },
-      usuarios: [
-        { idUsuario: 1, nombres: "María", apellidos: "García" },
-        { idUsuario: 2, nombres: "Carlos", apellidos: "Rodríguez" },
-      ],
-    },
-    {
-      idArea: 2,
-      nombreArea: "Agropecuaria",
-      fkIdSedes: { idSedes: 2, nombreSede: "Sede Centro" },
-      usuarios: [{ idUsuario: 3, nombres: "Ana", apellidos: "Martínez" }],
-    },
-    {
-      idArea: 3,
-      nombreArea: "Gastronomía",
-      fkIdSedes: { idSedes: 3, nombreSede: "Sede Sur" },
-      usuarios: [{ idUsuario: 4, nombres: "Lucía", apellidos: "Torres" }],
-    },
-  ];
 
+interface GesTablesUserProps {
+  areasData: Area[];
+  
+}
+
+const GesTablesUser = ({ areasData }: GesTablesUserProps) => {
+  
+  
   const bodegasData: (string | number)[][] = [
-  [
-    1, // ID
-    "Bodega Central", // Nombre
-    "TIC", // Categoría o Tag
-    "https://picsum.photos/80", // Img (URL)
-    500, // Capacidad
-    "Bodega principal de insumos TIC", // Descripción
-    "20 elementos", // Bodega Elementos
-    "Sede Norte", // Sede
-    "Carlos Rodríguez", // Usuario Responsable
-    "Admin", // Usuario Bodega
-  ],
-  [
-    2,
-    "Bodega de Gastronomía",
-    "Gastronomía",
-    "https://picsum.photos/81",
-    200,
-    "Insumos cocina y repostería",
-    "45 elementos",
-    "Sede Centro",
-    "Ana Martínez",
-    "Operador",
-  ],
-  [
-    3,
-    "Bodega Agro",
-    "Agropecuaria",
-    "https://picsum.photos/82",
-    800,
-    "Bodega de semillas y fertilizantes",
-    "60 elementos",
-    "Sede Sur",
-    "Lucía Torres",
-    "Supervisor",
-  ],
-];
-
+    [1, "Bodega Central", "TIC", "https://picsum.photos/80", 500, "Bodega principal de insumos TIC", "20 elementos", "Sede Norte", "Carlos Rodríguez", "Admin"],
+    [2, "Bodega de Gastronomía", "Gastronomía", "https://picsum.photos/81", 200, "Insumos cocina y repostería", "45 elementos", "Sede Centro", "Ana Martínez", "Operador"],
+    [3, "Bodega Agro", "Agropecuaria", "https://picsum.photos/82", 800, "Bodega de semillas y fertilizantes", "60 elementos", "Sede Sur", "Lucía Torres", "Supervisor"],
+  ];
 
   const tablas = [
     {
       titulo: "Áreas",
       descripcion: "Gestión de áreas del sistema",
       categoria: "areas",
+      // 4. Se usa la longitud del array recibido por props.
       registros: areasData.length,
       icon: <Grid size={20} />,
       modalContent: (
+        // 5. Se pasan los datos reales al componente de tabla.
         <AreasTable titulo="Tabla de Áreas" data={areasData} />
       ),
     },
@@ -87,7 +39,7 @@ const GesTablesUser = () => {
       titulo: "Bodegas",
       descripcion: "Gestión de bodegas y almacenamiento",
       categoria: "bodegas",
-      registros: 10,
+      registros: bodegasData.length, // Usando datos falsos temporalmente
       icon: <Warehouse size={20} />,
       modalContent: <BodegasTable titulo="Tabla de Bodegas" data={bodegasData} />,
     },
