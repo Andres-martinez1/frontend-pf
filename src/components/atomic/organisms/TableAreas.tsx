@@ -7,7 +7,7 @@ import {
   TableCell,
 } from "@heroui/table";
 import { Tooltip } from "@heroui/tooltip";
-import { EyeIcon, CheckIcon, Plus } from "lucide-react";
+import { Plus, PencilIcon, Trash2 } from "lucide-react";
 import CustomModal from "../molecules/Modal";
 import FormSoli from "./SolicitudDetalle";
 import AprobarSolicitudContent from "./AprobarSolicitudContent";
@@ -71,7 +71,7 @@ export default function AreasTable({ titulo, data }: AreasTableProps) {
                 className="hover:bg-gray-100 transition-colors duration-200"
               >
                 <TableCell>{area.idArea}</TableCell>
-                <TableCell className="font-semibold">
+                <TableCell>
                   {area.nombreArea}
                 </TableCell>
                 <TableCell>{area.fkIdSedes.nombreSede}</TableCell>
@@ -127,8 +127,8 @@ export default function AreasTable({ titulo, data }: AreasTableProps) {
                       scrollBehavior="inside"
                       shadow="lg"
                       trigger={
-                        <Tooltip content="Ver Detalle">
-                          <EyeIcon className="w-6 h-6 text-gray-500 hover:text-blue-500 border rounded-md" />
+                        <Tooltip content="Actualizar">
+                          <PencilIcon className="w-6 h-6 text-gray-500 hover:text-blue-500 border rounded-md" />
                         </Tooltip>
                       }
                     />
@@ -155,8 +155,8 @@ export default function AreasTable({ titulo, data }: AreasTableProps) {
                       scrollBehavior="inside"
                       shadow="lg"
                       trigger={
-                        <Tooltip content="Aprobar">
-                          <CheckIcon className="w-6 h-6 text-gray-500 hover:text-green-600 border rounded-md" />
+                        <Tooltip content="Eliminar">
+                          <Trash2 className="w-6 h-6 text-gray-500 hover:text-blue-600 border rounded-md" />
                         </Tooltip>
                       }
                     />

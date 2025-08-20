@@ -1,80 +1,92 @@
-import { Card, CardBody, Input, Button } from "@heroui/react";
-import CustomModal from "../molecules/Modal"; 
-import { Bodega } from "../../types/Bodegas/Bodega";
+import CustomInput from "../molecules/Input";
+import CustomSelect from "../molecules/Select";
+import CustomTextarea from "../molecules/Textarea";
 
-type Props = {
-  open: boolean;
-  onClose: () => void;
-};
+export default function FormBodega() {
+  const encargados = [
+    { label: "Diego Calderon", value: "Diego Calderon" },
+    { label: "María López", value: "Maria Lopez" },
+    { label: "Carlos Ramírez", value: "Carlos Ramirez" },
+  ];
 
-const BodegaForm = ({ open, onClose }: Props) => {
+  const sedes = [
+    { label: "Lima", value: "Lima" },
+    { label: "Arequipa", value: "Arequipa" },
+    { label: "Cusco", value: "Cusco" },
+  ];
+
   return (
-    <CustomModal open={open} onClose={onClose} title="Nueva Bodega">
-      <Card className="shadow-md rounded-2xl border border-gray-200">
-        <CardBody className="space-y-4">
-          {/* Nombre de la Bodega */}
-          <Input
-            type="text"
-            label="Nombre de la Bodega"
-            placeholder="Ej: Bodega Central"
-            fullWidth
-          />
+    <form className="space-y-6 w-full max-w-4xl mx-auto">
+      {/* Primera fila */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <CustomInput
+          label="Nombre de la Bodega"
+          type="text"
+          placeholder="Ej: Bodega Principal"
+          width="100%"
+        />
 
-          {/* Imagen */}
-          <Input
-            type="text"
-            label="Imagen (URL)"
-            placeholder="http://ejemplo.com/imagen.png"
-            fullWidth
-          />
+        <CustomInput
+          label="Capacidad Máxima"
+          type="number"
+          placeholder="1000"
+          width="100%"
+        />
+      </div>
 
-          {/* Capacidad Máxima */}
-          <Input
-            type="number"
-            label="Capacidad Máxima"
-            placeholder="Ej: 500"
-            fullWidth
-          />
+      {/* Segunda fila */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <CustomSelect
+          titulo="Sede"
+          planceholder="Seleccionar sede"
+          items={sedes}
+          selectionMode="single"
+          onChange={(value) => console.log("Sede seleccionada:", value)}
+          variant="bordered"
+          size="md"
+          radius="md"
+        />
 
-          {/* Descripción */}
-          <Input
-            type="text"
-            label="Descripción"
-            placeholder="Escribe una breve descripción"
-            fullWidth
-          />
+        <CustomSelect
+          titulo="Encargado"
+          planceholder="Seleccionar encargado"
+          items={encargados}
+          selectionMode="single"
+          onChange={(value) => console.log("Encargado seleccionado:", value)}
+          variant="bordered"
+          size="md"
+          radius="md"
+        />
+      </div>
 
-          {/* Sede */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Sede
+      {/* Descripción */}
+      <CustomTextarea
+        titulo="Descripción"
+        placeholder="Describe el propósito y contenido de la bodega..."
+      />
+
+      {/* Imagen */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700">
+          Imagen de la Bodega
+        </label>
+        <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-300 px-6 py-10">
+          <div className="text-center">
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              id="imagen"
+            />
+            <label
+              htmlFor="imagen"
+              className="cursor-pointer text-blue-600"
+            >
+              Arrastra una imagen aquí o selecciona un archivo
             </label>
-            <select className="w-full p-2 border rounded-lg focus:ring focus:ring-blue-200">
-              <option>Seleccionar sede</option>
-            </select>
           </div>
-
-          {/* Usuario encargado */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Usuario encargado
-            </label>
-            <select className="w-full p-2 border rounded-lg focus:ring focus:ring-blue-200">
-              <option>Seleccionar usuario</option>
-            </select>
-          </div>
-
-          {/* Botones */}
-          <div className="flex justify-end gap-3 pt-4">
-            <Button variant="light" onPress={onClose}>
-              Cancelar
-            </Button>
-            <Button color="primary">Guardar</Button>
-          </div>
-        </CardBody>
-      </Card>
-    </CustomModal>
+        </div>
+      </div>
+    </form>
   );
-};
-
-export default BodegaForm;
+}

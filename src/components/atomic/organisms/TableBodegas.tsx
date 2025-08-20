@@ -13,10 +13,11 @@ import FormSoli from "./SolicitudDetalle";
 import AprobarSolicitudContent from "./AprobarSolicitudContent";
 import BarraBusqueda from "../molecules/BarraBusqueda";
 import FormBodega from "./FormBodega";
+import { Bodega } from "../../../types/Bodegas/Bodega";
 
 type BodegasTableProps = {
   titulo: string;
-  data: (string | number)[][];
+  data: Bodega[];
 };
 
 export default function BodegasTable({ titulo, data }: BodegasTableProps) {
@@ -24,24 +25,14 @@ export default function BodegasTable({ titulo, data }: BodegasTableProps) {
     "ID",
     "Nombre Bodega",
     "Img",
-    "Capacidad Maxima",
-    "Descripcion",
+    "Capacidad Máxima",
+    "Descripción",
     "Bodega Elementos",
     "Sede",
-    "Usuario",
-    "Usuario Bodega",
+    "Usuario Responsable",
+    "Usuarios Bodega",
     "Acciones",
   ];
-
-  const bodegaClasses: Record<string, string> = {
-    TIC: "bg-blue-100 text-blue-700 w-[100px] border-1 border-blue-400",
-    Gastronomía:
-      "bg-orange-100 text-orange-700 w-[100px] border-1 border-orange-400",
-    Agropecuaria:
-      "bg-green-100 text-green-700 w-[100px] border-1 border-green-400",
-    Logística:
-      "bg-purple-200 text-purple-700 w-[100px] border-1 border-purple-400",
-  };
 
   return (
     <div className="bg-white shadow-2xl rounded-3xl p-4 w-auto border border-gray-300">
@@ -52,9 +43,7 @@ export default function BodegasTable({ titulo, data }: BodegasTableProps) {
         <BarraBusqueda />
 
         <CustomModal
-          content={<FormBodega open={false} onClose={function (): void {
-            throw new Error("Function not implemented.");
-          } }></FormBodega>}
+          content={<FormBodega />}
           title="Nueva Bodega"
           ButtonLabel="Nueva Bodega"
           cancelLabel="Cancelar"
@@ -87,30 +76,40 @@ export default function BodegasTable({ titulo, data }: BodegasTableProps) {
             ))}
           </TableHeader>
           <TableBody>
-            {data.map((row, rowIndex) => (
+            {data.map((bodega) => (
               <TableRow
-                key={rowIndex}
+                key={bodega.idBodega}
                 className="hover:bg-gray-100 transition-colors duration-200"
               >
-                <TableCell>{row[0]}</TableCell>
+                <TableCell>{bodega.idBodega}</TableCell>
+                <TableCell>{bodega.nombreBodega}</TableCell>
                 <TableCell>
-                  <div className="font-semibold">{row[1]}</div>
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs flex items-center gap-1 ${
-                      bodegaClasses[row[2] as string] ||
-                      "bg-gray-100 text-gray-700"
-                    }`}
-                  >
-                    {row[2]}
-                  </span>
+                  {bodega.img ? (
+                    <img
+                      src={bodega.img}
+                      alt={bodega.nombreBodega}
+                      className="w-12 h-12 object-cover rounded-md"
+                    />
+                  ) : (
+                    "Sin imagen"
+                  )}
                 </TableCell>
-                <TableCell>{row[3]}</TableCell>
-                <TableCell>{row[4]}</TableCell>
-                <TableCell>{row[5]}</TableCell>
-                <TableCell>{row[6]}</TableCell>
-                <TableCell>{row[7]}</TableCell>
-                <TableCell>{row[8]}</TableCell>
-                <TableCell>{row[9]}</TableCell>
+                <TableCell>{bodega.capacidadMaxima ?? "Sin definir"}</TableCell>
+                <TableCell>{bodega.descripcion ?? "Sin descripción"}</TableCell>
+                <TableCell>
+                  {bodega.bodegaElementos.length} elementos
+                </TableCell>
+                <TableCell>{bodega.fkIdSede?.nombreSede ?? "Sin sede"}</TableCell>
+                <TableCell>
+                  {bodega.fkIdUsuario
+                    ? `${bodega.fkIdUsuario.nombres} ${bodega.fkIdUsuario.apellidos}`
+                    : "Sin asignar"}
+                </TableCell>
+                <TableCell>
+                  {bodega.usuarioBodegas.length > 0
+                    ? bodega.usuarioBodegas.map((ub) => ub.rol).join(", ")
+                    : "Sin usuarios"}
+                </TableCell>
 
                 {/* 🔹 Acciones */}
                 <TableCell>
@@ -124,16 +123,16 @@ export default function BodegasTable({ titulo, data }: BodegasTableProps) {
                             correo: "maria.garcia@empresa.com",
                           }}
                           producto={{
-                            nombre: "Laptop UltraBook Pro",
-                            categoria: "TIC",
+                            nombre: bodega.nombreBodega,
+                            categoria: bodega.fkIdSede?.nombreSede ?? "",
                           }}
                           fechaSolicitud="14/1/2024"
                           fechaDevolucion="21/1/2024"
                           estado="Pendiente"
                           prioridad="Alta"
-                          motivo="Presentación cliente importante"
-                          comentarios="Necesito urgentemente para presentación con cliente el viernes."
-                          codigoSolicitud={"ssss"}
+                          motivo={bodega.descripcion ?? ""}
+                          comentarios="Detalle ficticio"
+                          codigoSolicitud={`BODEGA-${bodega.idBodega}`}
                         />
                       }
                       title="Detalle de Bodega"
@@ -160,7 +159,11 @@ export default function BodegasTable({ titulo, data }: BodegasTableProps) {
 
                     {/* Modal Eliminar */}
                     <CustomModal
-                      content={<AprobarSolicitudContent codigoSolicitud="ssss" />}
+                      content={
+                        <AprobarSolicitudContent
+                          codigoSolicitud={`BODEGA-${bodega.idBodega}`}
+                        />
+                      }
                       title="Eliminar Bodega"
                       cancelLabel="Cancelar"
                       confirmLabel="Eliminar"
