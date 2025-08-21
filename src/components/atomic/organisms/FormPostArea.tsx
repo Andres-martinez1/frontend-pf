@@ -1,4 +1,3 @@
-// /components/forms/FormularioCrearArea.tsx
 
 import React, { useState, ChangeEvent } from "react";
 import CustomInput from "../molecules/Input";

@@ -8,7 +8,7 @@ import CustomChip from "../atoms/Chip";
 import AreasTable from "../organisms/TableAreas";
 import { Area } from "../../../types/Areas/Area";
 import { Bodega } from "../../../types/Bodegas/Bodega";
-import BodegasTable from "../organisms/Tablebodegas";
+import BodegasTable from "../organisms/TableBodegas";
 import { Centro } from "../../../types/Centros/Centro";
 import CentrosTable from "../organisms/TableCentros";
 import { Elemento } from "../../../types/Elementos/Elemento";
