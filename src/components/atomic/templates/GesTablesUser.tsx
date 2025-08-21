@@ -1,30 +1,46 @@
-// /components/atomic/templates/GesTablesUser.tsx
-
 import { Grid, Warehouse, Landmark, Boxes } from "lucide-react";
 import CardTable from "../organisms/CardTable";
 import CardTitulo from "../organisms/CardTitulo";
 import { CircleStackIcon } from "@heroicons/react/16/solid";
 import CustomChip from "../atoms/Chip";
-import AreasTable from "../organisms/TableAreas";
+
+// --- Importaciones de Tipos y Tablas ---
 import { Area } from "../../../types/Areas/Area";
 import { Bodega } from "../../../types/Bodegas/Bodega";
-import BodegasTable from "../organisms/TableBodegas";
 import { Centro } from "../../../types/Centros/Centro";
-import CentrosTable from "../organisms/TableCentros";
 import { Elemento } from "../../../types/Elementos/Elemento";
-import ElementosTable from "../organisms/TableElementos";
 import { Ficha } from "../../../types/Ficha/Ficha";
+import { Municipio } from "../../../types/Municipios/Municipio";
+import { Programa } from "../../../types/Programas/Programa";
+import { Rol } from "../../../types/Roles/Rol";
+import { Sede } from "../../../types/Sedes/Sede";
+import { Usuario } from "../../../types/Usuarios/Usuario";
+
+import AreasTable from "../organisms/TableAreas";
+import BodegasTable from "../organisms/TableBodegas";
+import CentrosTable from "../organisms/TableCentros";
+import ElementosTable from "../organisms/TableElementos";
 import FichasTable from "../organisms/TableFichas";
 import MunicipioTable from "../organisms/TableMunicipio";
-import { Municipio } from "../../../types/Municipios/Municipio";
 import ProgramasTable from "../organisms/TableProgramas";
-import { Programa } from "../../../types/Programas/Programa";
 import RolesTable from "../organisms/TableRoles";
-import { Rol } from "../../../types/Roles/Rol";
 import SedesTable from "../organisms/TableSedes";
-import { Sede } from "../../../types/Sedes/Sede";
 
+// --- Tipado de las props del componente ---
+interface GesTablesUserProps {
+  areasData?: Area[];
+  bodegaElementosData?: Elemento[];
+  bodegasData?: Bodega[];
+  fichasData?: Ficha[];
+  municipiosData?: Municipio[];
+  programasData?: Programa[];
+  rolesData?: Rol[];
+  sedesData?: Sede[];
+  // --- CORRECCIÓN #1: Se añade la prop para recibir la lista de usuarios ---
+  usuariosData?: Usuario[];
+}
 
+// --- Componente GesTablesUser ---
 const GesTablesUser = ({
   areasData = [],
   bodegaElementosData = [],
@@ -33,22 +49,15 @@ const GesTablesUser = ({
   municipiosData = [],
   programasData = [],
   rolesData = [],
-  sedesData = [], // <-- Recibes las sedes correctamente
-}: {
-  areasData: Area[];
-  bodegaElementosData: Elemento[];
-  bodegasData: Bodega[];
-  fichasData: Ficha[];
-  municipiosData: Municipio[];
-  programasData: Programa[];
-  rolesData: Rol[];
-  sedesData: Sede[]; 
-}) => {
+  sedesData = [],
+  // Se asigna un array vacío como valor por defecto para seguridad
+  usuariosData = [],
+}: GesTablesUserProps) => {
 
+  // Simulación de datos para Centros, como en tu ejemplo.
+  const centrosData: Centro[] = [];
 
-  const centrosData: Centro[] = [ ];
-
-
+  // Definición de las tablas que se mostrarán en la interfaz
   const tablas = [
     {
       titulo: "Áreas",
@@ -56,8 +65,6 @@ const GesTablesUser = ({
       categoria: "areas",
       registros: areasData.length,
       icon: <Grid size={20} />,
-      // --- ¡AQUÍ ESTÁ LA CORRECCIÓN! ---
-      // Simplemente añadimos la prop `sedes` que le faltaba a AreasTable.
       modalContent: <AreasTable titulo="Tabla de Áreas" data={areasData} sedes={sedesData} />,
     },
     {
@@ -66,8 +73,18 @@ const GesTablesUser = ({
       categoria: "bodegas",
       registros: bodegasData.length,
       icon: <Warehouse size={20} />,
+      /*
+       * --- CORRECCIÓN #2: Se pasa la lista de sedes y la lista de usuarios a BodegasTable ---
+       * Ahora el componente hijo 'BodegasTable' y sus sub-componentes (los formularios)
+       * tendrán acceso a la lista completa de usuarios para renderizar el selector.
+       */
       modalContent: (
-        <BodegasTable titulo="Tabla de Bodegas" data={bodegasData} />
+        <BodegasTable
+          titulo="Tabla de Bodegas"
+          data={bodegasData}
+          sedes={sedesData}
+          usuarios={usuariosData} // <-- ¡AQUÍ ESTÁ LA CLAVE!
+        />
       ),
     },
     {
@@ -126,14 +143,13 @@ const GesTablesUser = ({
       icon: <Grid size={20} />,
       modalContent: <RolesTable titulo="Tabla de Roles" data={rolesData} />,
     },
-    
     {
       titulo: "Sedes",
       descripcion: "Gestión de sedes institucionales",
       categoria: "sedes",
-      registros: sedesData.length, 
+      registros: sedesData.length,
       icon: <Landmark size={20} />,
-      modalContent: <SedesTable titulo="Tabla de Sedes" data={sedesData} />, 
+      modalContent: <SedesTable titulo="Tabla de Sedes" data={sedesData} />,
     },
   ];
 
