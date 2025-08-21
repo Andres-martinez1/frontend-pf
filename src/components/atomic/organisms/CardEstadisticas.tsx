@@ -13,12 +13,14 @@ type CardEstadisticasProps = {
   descripcion: string;  
   features?: FeatureItem[]; 
   className?: string;
+  children?: React.ReactNode;
 };
 
 export default function CardEstadisticas({
   icon,
   titulo,
   descripcion,
+  children,
   features = [],
   className = "",
 }: CardEstadisticasProps) {
@@ -43,6 +45,7 @@ export default function CardEstadisticas({
             ))}
           </div>
         )}
+        {children && <div className="mt-4">{children}</div>}
       </CardBody>
     </CustomCard>
   );
