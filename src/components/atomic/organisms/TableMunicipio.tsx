@@ -10,10 +10,10 @@ import { Tooltip } from "@heroui/tooltip";
 import { EyeIcon, CheckIcon, Plus } from "lucide-react";
 import CustomModal from "../molecules/Modal";
 import FormSoli from "./SolicitudDetalle";
-import AprobarSolicitudContent from "./AprobarSolicitudContent";
 import BarraBusqueda from "../molecules/BarraBusqueda";
 import { Municipio } from "../../../types/Municipios/Municipio";
 import FormMunicipio from "./FormMunicipio";
+import EliminarItemContent from "./Eliminar";
 
 type MunicipioTableProps = {
   titulo: string;
@@ -29,7 +29,6 @@ export default function MunicipioTable({ titulo, data }: MunicipioTableProps) {
 
       <div className="flex justify-between items-center mb-4">
         <BarraBusqueda />
-        {/* Botón para Nuevo Municipio */}
         <CustomModal
           content={<FormMunicipio></FormMunicipio>}
           title="Nuevo Municipio"
@@ -47,7 +46,6 @@ export default function MunicipioTable({ titulo, data }: MunicipioTableProps) {
           scrollBehavior="inside"
           shadow="lg"
           icon={<Plus className="w-5 h-5" />}
-
         />
       </div>
 
@@ -69,15 +67,10 @@ export default function MunicipioTable({ titulo, data }: MunicipioTableProps) {
                 key={municipio.idMunicipio}
                 className="hover:bg-gray-100 transition-colors duration-200"
               >
-                {/* ID */}
                 <TableCell>{municipio.idMunicipio}</TableCell>
 
-                {/* Nombre */}
-                <TableCell>
-                  {municipio.nombreMunicipio}
-                </TableCell>
+                <TableCell>{municipio.nombreMunicipio}</TableCell>
 
-                {/* Centros */}
                 <TableCell>
                   {municipio.centros && municipio.centros.length > 0 ? (
                     <ul>
@@ -90,7 +83,6 @@ export default function MunicipioTable({ titulo, data }: MunicipioTableProps) {
                   )}
                 </TableCell>
 
-                {/* Fichas */}
                 <TableCell>
                   {municipio.fichas && municipio.fichas.length > 0 ? (
                     <ul>
@@ -103,10 +95,8 @@ export default function MunicipioTable({ titulo, data }: MunicipioTableProps) {
                   )}
                 </TableCell>
 
-                {/* Acciones */}
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    {/* Ver Detalle */}
                     <CustomModal
                       content={
                         <FormSoli
@@ -149,17 +139,28 @@ export default function MunicipioTable({ titulo, data }: MunicipioTableProps) {
                       }
                     />
 
-                    {/* Aprobar */}
                     <CustomModal
-                      content={<AprobarSolicitudContent codigoSolicitud="ssss" />}
-                      title="Aprobar Solicitud"
+                      content={
+                        <EliminarItemContent
+                          entityLabel="Municipio"
+                          itemName={municipio.nombreMunicipio}
+                          itemId={municipio.idMunicipio}
+                          category="municipios"
+                          warningMessage="Se perderán todos los datos asociados a este municipio."
+                          withComment
+                          onSuccess={() =>
+                            console.log("Municipio eliminado correctamente")
+                          }
+                        />
+                      }
+                      title="Eliminar Municipio"
                       cancelLabel="Cancelar"
-                      confirmLabel="Aprobar"
+                      confirmLabel="Eliminar"
                       ButtonLabel=""
                       BgColor="transparent"
                       cancelBgColor="gray"
-                      confirmBgColor="#068500"
-                      bordeconfirm="#044700"
+                      confirmBgColor="#d32f2f"
+                      bordeconfirm="#a10f0f"
                       cancelTextColor="white"
                       confirmTextColor="white"
                       size="sm"
@@ -169,8 +170,8 @@ export default function MunicipioTable({ titulo, data }: MunicipioTableProps) {
                       scrollBehavior="inside"
                       shadow="lg"
                       trigger={
-                        <Tooltip content="Aprobar">
-                          <CheckIcon className="w-6 h-6 text-gray-500 hover:text-green-600 border rounded-md" />
+                        <Tooltip content="Eliminar">
+                          <CheckIcon className="w-6 h-6 text-gray-500 hover:text-red-600 border rounded-md" />
                         </Tooltip>
                       }
                     />

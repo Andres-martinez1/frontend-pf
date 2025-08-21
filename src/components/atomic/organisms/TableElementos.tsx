@@ -10,10 +10,10 @@ import { Tooltip } from "@heroui/tooltip";
 import { EyeIcon, CheckIcon, Plus } from "lucide-react";
 import CustomModal from "../molecules/Modal";
 import FormSoli from "./SolicitudDetalle";
-import AprobarSolicitudContent from "./AprobarSolicitudContent";
 import BarraBusqueda from "../molecules/BarraBusqueda";
-import { Elemento } from "../../../types/Elementos/Elemento"; // 👈 importa tu type
+import { Elemento } from "../../../types/Elementos/Elemento";
 import FormElemento from "./FormProduc";
+import EliminarItemContent from "./Eliminar";
 
 type ElementosTableProps = {
   titulo: string;
@@ -44,7 +44,6 @@ export default function ElementosTable({ titulo, data }: ElementosTableProps) {
 
       <div className="flex justify-between items-center mb-4">
         <BarraBusqueda />
-        {/* Botón para agregar nuevo elemento (puedes conectar a tu FormElemento después) */}
         <CustomModal
           content={<FormElemento></FormElemento>}
           title="Nuevo Elemento"
@@ -62,7 +61,6 @@ export default function ElementosTable({ titulo, data }: ElementosTableProps) {
           scrollBehavior="inside"
           shadow="lg"
           icon={<Plus className="w-5 h-5" />}
-          
         />
       </div>
 
@@ -85,9 +83,7 @@ export default function ElementosTable({ titulo, data }: ElementosTableProps) {
                 className="hover:bg-gray-100 transition-colors duration-200"
               >
                 <TableCell>{elem.idElemento}</TableCell>
-                <TableCell>
-                  {elem.nombreElemento}
-                </TableCell>
+                <TableCell>{elem.nombreElemento}</TableCell>
                 <TableCell>{elem.clasificacion ?? "—"}</TableCell>
                 <TableCell>{elem.numeroDeSerie ?? "—"}</TableCell>
                 <TableCell>{elem.uso ?? "—"}</TableCell>
@@ -123,7 +119,6 @@ export default function ElementosTable({ titulo, data }: ElementosTableProps) {
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    {/* Modal Detalle */}
                     <CustomModal
                       content={
                         <FormSoli
@@ -166,19 +161,28 @@ export default function ElementosTable({ titulo, data }: ElementosTableProps) {
                       }
                     />
 
-                    {/* Modal Aprobar */}
                     <CustomModal
                       content={
-                        <AprobarSolicitudContent codigoSolicitud="ssss" />
+                        <EliminarItemContent
+                          entityLabel="Elemento"
+                          itemName={elem.nombreElemento}
+                          itemId={elem.idElemento}
+                          category="elementos"
+                          warningMessage="Se perderán todos los datos asociados a este elemento."
+                          withComment
+                          onSuccess={() =>
+                            console.log("Elemento eliminado correctamente")
+                          }
+                        />
                       }
-                      title="Aprobar Solicitud"
+                      title="Eliminar Elemento"
                       cancelLabel="Cancelar"
-                      confirmLabel="Aprobar"
+                      confirmLabel="Eliminar"
                       ButtonLabel=""
                       BgColor="transparent"
                       cancelBgColor="gray"
-                      confirmBgColor="#068500"
-                      bordeconfirm="#044700"
+                      confirmBgColor="#d32f2f"
+                      bordeconfirm="#a10f0f"
                       cancelTextColor="white"
                       confirmTextColor="white"
                       size="sm"
@@ -188,8 +192,8 @@ export default function ElementosTable({ titulo, data }: ElementosTableProps) {
                       scrollBehavior="inside"
                       shadow="lg"
                       trigger={
-                        <Tooltip content="Aprobar">
-                          <CheckIcon className="w-6 h-6 text-gray-500 hover:text-green-500 border rounded-md" />
+                        <Tooltip content="Eliminar">
+                          <CheckIcon className="w-6 h-6 text-gray-500 hover:text-red-600 border rounded-md" />
                         </Tooltip>
                       }
                     />

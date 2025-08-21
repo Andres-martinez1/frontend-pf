@@ -9,10 +9,8 @@ import {
 import { Tooltip } from "@heroui/tooltip";
 import { Plus, PencilIcon, Trash2 } from "lucide-react";
 import CustomModal from "../molecules/Modal";
-import FormSoli from "./SolicitudDetalle";
-import AprobarSolicitudContent from "./AprobarSolicitudContent";
 import BarraBusqueda from "../molecules/BarraBusqueda";
-import { Area } from "../../../types/Areas/Area"; 
+import { Area } from "../../../types/Areas/Area";
 import FormArea from "./FormArea";
 import EliminarItemContent from "./Eliminar";
 
@@ -47,8 +45,7 @@ export default function AreasTable({ titulo, data }: AreasTableProps) {
           placement="center"
           scrollBehavior="inside"
           shadow="lg"
-          icon={ <Plus className="w-5 h-5" />}
-          
+          icon={<Plus className="w-5 h-5" />}
         />
       </div>
 
@@ -71,9 +68,7 @@ export default function AreasTable({ titulo, data }: AreasTableProps) {
                 className="hover:bg-gray-100 transition-colors duration-200"
               >
                 <TableCell>{area.idArea}</TableCell>
-                <TableCell>
-                  {area.nombreArea}
-                </TableCell>
+                <TableCell>{area.nombreArea}</TableCell>
                 <TableCell>{area.fkIdSedes.nombreSede}</TableCell>
                 <TableCell>
                   {area.usuarios && area.usuarios.length > 0 ? (
@@ -90,12 +85,8 @@ export default function AreasTable({ titulo, data }: AreasTableProps) {
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    {/* Modal Detalle */}
                     <CustomModal
-                      content={
-                        <FormArea
-                        />
-                      }
+                      content={<FormArea />}
                       title="Detalle de Solicitud"
                       cancelLabel=""
                       confirmLabel="Cerrar"
@@ -118,16 +109,17 @@ export default function AreasTable({ titulo, data }: AreasTableProps) {
                       }
                     />
 
-                    {/* Modal Aprobar */}
                     <CustomModal
                       content={
                         <EliminarItemContent
-  title="Area"
-  itemName="Juan Pérez"
-  warningMessage="Se perderán todos los datos asociados a la area."
-/> 
+                          itemName={area.nombreArea}
+                          warningMessage="Se perderán todos los datos asociados a esta área."
+                          entityLabel="Área"
+                          itemId={area.idArea}
+                          category="areas"
+                        />
                       }
-                      title="Eliminar Area"
+                      title="Eliminar Área"
                       cancelLabel="Cancelar"
                       confirmLabel="Aprobar"
                       ButtonLabel=""

@@ -10,8 +10,9 @@ import { Tooltip } from "@heroui/tooltip";
 import { Plus, EyeIcon, CheckIcon } from "lucide-react";
 import CustomModal from "../molecules/Modal";
 import BarraBusqueda from "../molecules/BarraBusqueda";
-import { Rol } from "../../../types/Roles/Rol"; 
+import { Rol } from "../../../types/Roles/Rol";
 import FormRol from "./FormRol";
+import EliminarItemContent from "./Eliminar";
 
 type RolesTableProps = {
   titulo: string;
@@ -25,7 +26,6 @@ export default function RolesTable({ titulo, data }: RolesTableProps) {
     <div className="bg-white shadow-2xl rounded-3xl p-4 w-auto border border-gray-300">
       <h1 className="text-2xl font-bold mb-5">{titulo}</h1>
 
-      {/* 🔹 Barra de búsqueda + botón crear */}
       <div className="flex justify-between items-center mb-4">
         <BarraBusqueda />
         <CustomModal
@@ -48,7 +48,6 @@ export default function RolesTable({ titulo, data }: RolesTableProps) {
         />
       </div>
 
-      {/* 🔹 Tabla */}
       <div className="overflow-x-auto">
         <Table aria-label="Tabla de Roles" removeWrapper>
           <TableHeader>
@@ -70,7 +69,6 @@ export default function RolesTable({ titulo, data }: RolesTableProps) {
                 <TableCell>{rol.idRol}</TableCell>
                 <TableCell>{rol.nombreRol}</TableCell>
 
-                {/* 🔹 Permisos */}
                 <TableCell>
                   {rol.permisos && rol.permisos.length > 0 ? (
                     <ul className="list-disc pl-4">
@@ -83,7 +81,6 @@ export default function RolesTable({ titulo, data }: RolesTableProps) {
                   )}
                 </TableCell>
 
-                {/* 🔹 Usuarios */}
                 <TableCell>
                   {rol.usuarios && rol.usuarios.length > 0 ? (
                     <ul>
@@ -96,11 +93,10 @@ export default function RolesTable({ titulo, data }: RolesTableProps) {
                   )}
                 </TableCell>
 
-                {/* 🔹 Acciones */}
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <CustomModal
-                      content={<FormRol/>}
+                      content={<FormRol />}
                       title="Detalle Rol"
                       cancelLabel=""
                       confirmLabel="Cerrar"
@@ -124,15 +120,27 @@ export default function RolesTable({ titulo, data }: RolesTableProps) {
                     />
 
                     <CustomModal
-                      content={<p>¿Seguro que deseas aprobar/eliminar este rol?</p>}
-                      title="Confirmar Acción"
+                      content={
+                        <EliminarItemContent
+                          entityLabel="Rol"
+                          itemName={rol.nombreRol}
+                          itemId={rol.idRol}
+                          category="roles"
+                          warningMessage="Se perderán todos los usuarios y permisos asociados a este rol."
+                          withComment
+                          onSuccess={() =>
+                            console.log("Rol eliminado correctamente")
+                          }
+                        />
+                      }
+                      title="Eliminar Rol"
                       cancelLabel="Cancelar"
-                      confirmLabel="Confirmar"
+                      confirmLabel="Eliminar"
                       ButtonLabel=""
                       BgColor="transparent"
                       cancelBgColor="gray"
-                      confirmBgColor="#068500"
-                      bordeconfirm="#044700"
+                      confirmBgColor="#d32f2f"
+                      bordeconfirm="#a10f0f"
                       cancelTextColor="white"
                       confirmTextColor="white"
                       size="sm"
@@ -142,8 +150,8 @@ export default function RolesTable({ titulo, data }: RolesTableProps) {
                       scrollBehavior="inside"
                       shadow="lg"
                       trigger={
-                        <Tooltip content="Aprobar / Eliminar">
-                          <CheckIcon className="w-6 h-6 text-gray-500 hover:text-green-600 border rounded-md" />
+                        <Tooltip content="Eliminar">
+                          <CheckIcon className="w-6 h-6 text-gray-500 hover:text-red-600 border rounded-md" />
                         </Tooltip>
                       }
                     />
