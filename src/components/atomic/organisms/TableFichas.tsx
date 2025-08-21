@@ -10,10 +10,10 @@ import { Tooltip } from "@heroui/tooltip";
 import { EyeIcon, CheckIcon, Plus } from "lucide-react";
 import CustomModal from "../molecules/Modal";
 import FormSoli from "./SolicitudDetalle";
-import AprobarSolicitudContent from "./AprobarSolicitudContent";
 import BarraBusqueda from "../molecules/BarraBusqueda";
 import { Ficha } from "../../../types/Ficha/Ficha";
 import FormFicha from "./FormFicha";
+import EliminarItemContent from "./Eliminar";
 
 type FichasTableProps = {
   titulo: string;
@@ -36,28 +36,26 @@ export default function FichasTable({ titulo, data }: FichasTableProps) {
       <h1 className="text-2xl font-bold mb-5">{titulo}</h1>
       <div className="overflow-x-auto">
         <div className="flex justify-between items-center mb-4">
-        <BarraBusqueda />
-        {/* Botón para agregar nuevo elemento (puedes conectar a tu FormElemento después) */}
-        <CustomModal
-          content={<FormFicha></FormFicha>}
-          title="Nueva Ficha"
-          ButtonLabel="Nueva Ficha"
-          cancelLabel="Cancelar"
-          confirmLabel="Guardar"
-          cancelBgColor="gray"
-          confirmBgColor="#1A1A36"
-          cancelTextColor="white"
-          confirmTextColor="white"
-          size="xl"
-          radius="lg"
-          backdrop="opaque"
-          placement="center"
-          scrollBehavior="inside"
-          shadow="lg"
-          icon={<Plus className="w-5 h-5" />}
-          
-        />
-      </div>
+          <BarraBusqueda />
+          <CustomModal
+            content={<FormFicha></FormFicha>}
+            title="Nueva Ficha"
+            ButtonLabel="Nueva Ficha"
+            cancelLabel="Cancelar"
+            confirmLabel="Guardar"
+            cancelBgColor="gray"
+            confirmBgColor="#1A1A36"
+            cancelTextColor="white"
+            confirmTextColor="white"
+            size="xl"
+            radius="lg"
+            backdrop="opaque"
+            placement="center"
+            scrollBehavior="inside"
+            shadow="lg"
+            icon={<Plus className="w-5 h-5" />}
+          />
+        </div>
 
         <Table aria-label="Tabla de Fichas" removeWrapper>
           <TableHeader>
@@ -96,7 +94,6 @@ export default function FichasTable({ titulo, data }: FichasTableProps) {
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    {/* Modal detalle */}
                     <CustomModal
                       content={
                         <FormSoli
@@ -139,17 +136,28 @@ export default function FichasTable({ titulo, data }: FichasTableProps) {
                       }
                     />
 
-                    {/* Modal aprobar */}
                     <CustomModal
-                      content={<AprobarSolicitudContent codigoSolicitud="ssss" />}
-                      title="Aprobar Solicitud"
+                      content={
+                        <EliminarItemContent
+                          entityLabel="Ficha"
+                          itemName={ficha.numeroFicha}
+                          itemId={ficha.idFicha}
+                          category="fichas"
+                          warningMessage="Se perderán todos los datos asociados a la ficha."
+                          withComment
+                          onSuccess={() =>
+                            console.log("Ficha eliminada correctamente")
+                          }
+                        />
+                      }
+                      title="Eliminar Ficha"
                       cancelLabel="Cancelar"
-                      confirmLabel="Aprobar"
+                      confirmLabel="Eliminar"
                       ButtonLabel=""
                       BgColor="transparent"
                       cancelBgColor="gray"
-                      confirmBgColor="#068500"
-                      bordeconfirm="#044700"
+                      confirmBgColor="#d32f2f"
+                      bordeconfirm="#a10f0f"
                       cancelTextColor="white"
                       confirmTextColor="white"
                       size="sm"
@@ -159,8 +167,8 @@ export default function FichasTable({ titulo, data }: FichasTableProps) {
                       scrollBehavior="inside"
                       shadow="lg"
                       trigger={
-                        <Tooltip content="Aprobar">
-                          <CheckIcon className="w-6 h-6 text-gray-500 hover:text-green-600 border rounded-md" />
+                        <Tooltip content="Eliminar">
+                          <CheckIcon className="w-6 h-6 text-gray-500 hover:text-red-600 border rounded-md" />
                         </Tooltip>
                       }
                     />

@@ -10,11 +10,10 @@ import { Tooltip } from "@heroui/tooltip";
 import { EyeIcon, CheckIcon, Plus } from "lucide-react";
 import CustomModal from "../molecules/Modal";
 import FormSoli from "./SolicitudDetalle";
-import AprobarSolicitudContent from "./AprobarSolicitudContent";
 import BarraBusqueda from "../molecules/BarraBusqueda";
 import { Programa } from "../../../types/Programas/Programa";
 import FormPrograma from "./FormProgramas";
-
+import EliminarItemContent from "./Eliminar";
 
 type ProgramasTableProps = {
   titulo: string;
@@ -31,23 +30,23 @@ export default function ProgramasTable({ titulo, data }: ProgramasTableProps) {
       <div className="flex justify-between items-center mb-4">
         <BarraBusqueda />
         <CustomModal
-                  content={<FormPrograma></FormPrograma>}
-                  title="Nuevo Programa"
-                  ButtonLabel="Nuevo Programa"
-                  cancelLabel="Cancelar"
-                  confirmLabel="Guardar"
-                  cancelBgColor="gray"
-                  confirmBgColor="#1A1A36"
-                  cancelTextColor="white"
-                  confirmTextColor="white"
-                  size="xl"
-                  radius="lg"
-                  backdrop="opaque"
-                  placement="center"
-                  scrollBehavior="inside"
-                  shadow="lg"
-                  icon={<Plus className="w-5 h-5" />}
-                />
+          content={<FormPrograma></FormPrograma>}
+          title="Nuevo Programa"
+          ButtonLabel="Nuevo Programa"
+          cancelLabel="Cancelar"
+          confirmLabel="Guardar"
+          cancelBgColor="gray"
+          confirmBgColor="#1A1A36"
+          cancelTextColor="white"
+          confirmTextColor="white"
+          size="xl"
+          radius="lg"
+          backdrop="opaque"
+          placement="center"
+          scrollBehavior="inside"
+          shadow="lg"
+          icon={<Plus className="w-5 h-5" />}
+        />
       </div>
 
       <div className="overflow-x-auto">
@@ -68,13 +67,10 @@ export default function ProgramasTable({ titulo, data }: ProgramasTableProps) {
                 key={programa.idPrograma}
                 className="hover:bg-gray-100 transition-colors duration-200"
               >
-                {/* ID */}
                 <TableCell>{programa.idPrograma}</TableCell>
 
-                {/* Nombre */}
                 <TableCell>{programa.nombrePrograma}</TableCell>
 
-                {/* Fichas asociadas */}
                 <TableCell>
                   {programa.fichas && programa.fichas.length > 0 ? (
                     <ul>
@@ -87,10 +83,8 @@ export default function ProgramasTable({ titulo, data }: ProgramasTableProps) {
                   )}
                 </TableCell>
 
-                {/* Acciones */}
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    {/* Ver Detalle */}
                     <CustomModal
                       content={
                         <FormSoli
@@ -133,17 +127,28 @@ export default function ProgramasTable({ titulo, data }: ProgramasTableProps) {
                       }
                     />
 
-                    {/* Aprobar */}
                     <CustomModal
-                      content={<AprobarSolicitudContent codigoSolicitud="ssss" />}
-                      title="Aprobar Solicitud"
+                      content={
+                        <EliminarItemContent
+                          entityLabel="Programa"
+                          itemName={programa.nombrePrograma}
+                          itemId={programa.idPrograma}
+                          category="programas"
+                          warningMessage="Se perderán todos los datos asociados a este programa."
+                          withComment
+                          onSuccess={() =>
+                            console.log("Programa eliminado correctamente")
+                          }
+                        />
+                      }
+                      title="Eliminar Programa"
                       cancelLabel="Cancelar"
-                      confirmLabel="Aprobar"
+                      confirmLabel="Eliminar"
                       ButtonLabel=""
                       BgColor="transparent"
                       cancelBgColor="gray"
-                      confirmBgColor="#068500"
-                      bordeconfirm="#044700"
+                      confirmBgColor="#d32f2f"
+                      bordeconfirm="#a10f0f"
                       cancelTextColor="white"
                       confirmTextColor="white"
                       size="sm"
@@ -153,8 +158,8 @@ export default function ProgramasTable({ titulo, data }: ProgramasTableProps) {
                       scrollBehavior="inside"
                       shadow="lg"
                       trigger={
-                        <Tooltip content="Aprobar">
-                          <CheckIcon className="w-6 h-6 text-gray-500 hover:text-green-600 border rounded-md" />
+                        <Tooltip content="Eliminar">
+                          <CheckIcon className="w-6 h-6 text-gray-500 hover:text-red-600 border rounded-md" />
                         </Tooltip>
                       }
                     />

@@ -14,8 +14,11 @@ import { Plus, PencilIcon, Trash2, Search } from "lucide-react";
 
 // --- Se importan todas las moléculas y componentes necesarios ---
 import CustomModal from "../molecules/Modal";
-import CustomInput from "../molecules/Input"; // Se importa CustomInput directamente para la búsqueda
-import { Area } from "../../../types/Areas/Area";
+import FormSoli from "./SolicitudDetalle";
+import AprobarSolicitudContent from "./AprobarSolicitudContent";
+import BarraBusqueda from "../molecules/BarraBusqueda";
+import { Area } from "../../../types/Areas/Area"; 
+import FormArea from "./FormArea";
 import EliminarItemContent from "./Eliminar";
 import FormPostArea from "./FormPostArea";
 import FormEditArea from "./FormEditArea";
@@ -92,15 +95,20 @@ export default function AreasTable({ titulo, data, sedes = [] }: AreasTableProps
         <CustomModal
           title="Crear Nueva Área"
           ButtonLabel="Nueva Área"
-          icon={<Plus className="w-5 h-5" />}
-          size="2xl"
-          content={
-            <FormPostArea
-              sedesDisponibles={sedes}
-              onFormSubmit={handleCreateArea}
-              onCancel={() => {}} // Se pasa una función vacía; el modal se cierra solo
-            />
-          }
+          cancelLabel="Cancelar"
+          confirmLabel="Guardar"
+          cancelBgColor="gray"
+          confirmBgColor="#1A1A36"
+          cancelTextColor="white"
+          confirmTextColor="white"
+          size="xl"
+          radius="lg"
+          backdrop="opaque"
+          placement="center"
+          scrollBehavior="inside"
+          shadow="lg"
+          icon={ <Plus className="w-5 h-5" />}
+          
         />
       </div>
 
@@ -124,43 +132,63 @@ export default function AreasTable({ titulo, data, sedes = [] }: AreasTableProps
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    {/* Modal de Edición activado por el icono 'trigger' */}
+                    {/* Modal Detalle */}
                     <CustomModal
-                      title="Editar Área"
-                      size="2xl"
-                      trigger={
-                        <Tooltip content="Editar Área">
-                          <PencilIcon className="w-6 h-6 text-gray-500 hover:text-blue-500 cursor-pointer border rounded-md p-1" />
-                        </Tooltip>
-                      }
                       content={
-                        <FormEditArea
-                          areaAEditar={area}
-                          sedesDisponibles={sedes}
-                          onFormSubmit={handleUpdateArea}
-                          onCancel={() => {}} // El modal se cierra solo
+                        <FormArea
                         />
                       }
-                    />
-
-                    {/* Modal de Eliminación activado por el icono 'trigger' */}
-                    <CustomModal
-                      title="Confirmar Eliminación"
-                      size="md"
-                      confirmLabel="Eliminar"
-                      cancelLabel="Cancelar"
-                      onConfirm={() => handleDeleteArea(area.idArea)}
+                      title="Detalle de Solicitud"
+                      cancelLabel=""
+                      confirmLabel="Cerrar"
+                      ButtonLabel=""
+                      BgColor="transparent"
+                      cancelBgColor=""
+                      confirmBgColor="#1A1A36"
+                      cancelTextColor="white"
+                      confirmTextColor="white"
+                      size="4xl"
+                      radius="lg"
+                      backdrop="opaque"
+                      placement="center"
+                      scrollBehavior="inside"
+                      shadow="lg"
                       trigger={
                         <Tooltip content="Eliminar Área">
                           <Trash2 className="w-6 h-6 text-gray-500 hover:text-red-600 cursor-pointer border rounded-md p-1" />
                         </Tooltip>
                       }
+                    />
+
+                    {/* Modal Aprobar */}
+                    <CustomModal
                       content={
                         <EliminarItemContent
-                          title="Área"
-                          itemName={area.nombreArea}
-                          warningMessage="Se perderán todos los datos asociados a esta área."
-                        />
+  title="Area"
+  itemName="Juan Pérez"
+  warningMessage="Se perderán todos los datos asociados a la area."
+/> 
+                      }
+                      title="Eliminar Area"
+                      cancelLabel="Cancelar"
+                      confirmLabel="Aprobar"
+                      ButtonLabel=""
+                      BgColor="transparent"
+                      cancelBgColor="gray"
+                      confirmBgColor="#068500"
+                      bordeconfirm="#044700"
+                      cancelTextColor="white"
+                      confirmTextColor="white"
+                      size="sm"
+                      radius="lg"
+                      backdrop="opaque"
+                      placement="center"
+                      scrollBehavior="inside"
+                      shadow="lg"
+                      trigger={
+                        <Tooltip content="Eliminar">
+                          <Trash2 className="w-6 h-6 text-gray-500 hover:text-blue-600 border rounded-md" />
+                        </Tooltip>
                       }
                     />
                   </div>

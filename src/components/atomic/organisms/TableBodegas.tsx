@@ -10,10 +10,10 @@ import { Tooltip } from "@heroui/tooltip";
 import { EyeIcon, CheckIcon, Plus } from "lucide-react";
 import CustomModal from "../molecules/Modal";
 import FormSoli from "./SolicitudDetalle";
-import AprobarSolicitudContent from "./AprobarSolicitudContent";
 import BarraBusqueda from "../molecules/BarraBusqueda";
 import FormBodega from "./FormBodega";
 import { Bodega } from "../../../types/Bodegas/Bodega";
+import EliminarItemContent from "./Eliminar";
 
 type BodegasTableProps = {
   titulo: string;
@@ -38,7 +38,6 @@ export default function BodegasTable({ titulo, data }: BodegasTableProps) {
     <div className="bg-white shadow-2xl rounded-3xl p-4 w-auto border border-gray-300">
       <h1 className="text-2xl font-bold mb-5">{titulo}</h1>
 
-      {/* 🔹 Barra de búsqueda + Botón Nueva Bodega */}
       <div className="flex justify-between items-center mb-4">
         <BarraBusqueda />
 
@@ -62,7 +61,6 @@ export default function BodegasTable({ titulo, data }: BodegasTableProps) {
         />
       </div>
 
-      {/* 🔹 Tabla */}
       <div className="overflow-x-auto">
         <Table aria-label="Tabla de Bodegas" removeWrapper>
           <TableHeader>
@@ -96,10 +94,10 @@ export default function BodegasTable({ titulo, data }: BodegasTableProps) {
                 </TableCell>
                 <TableCell>{bodega.capacidadMaxima ?? "Sin definir"}</TableCell>
                 <TableCell>{bodega.descripcion ?? "Sin descripción"}</TableCell>
+                <TableCell>{bodega.bodegaElementos.length} elementos</TableCell>
                 <TableCell>
-                  {bodega.bodegaElementos.length} elementos
+                  {bodega.fkIdSede?.nombreSede ?? "Sin sede"}
                 </TableCell>
-                <TableCell>{bodega.fkIdSede?.nombreSede ?? "Sin sede"}</TableCell>
                 <TableCell>
                   {bodega.fkIdUsuario
                     ? `${bodega.fkIdUsuario.nombres} ${bodega.fkIdUsuario.apellidos}`
@@ -111,10 +109,8 @@ export default function BodegasTable({ titulo, data }: BodegasTableProps) {
                     : "Sin usuarios"}
                 </TableCell>
 
-                {/* 🔹 Acciones */}
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    {/* Modal Ver Detalle */}
                     <CustomModal
                       content={
                         <FormSoli
@@ -157,11 +153,18 @@ export default function BodegasTable({ titulo, data }: BodegasTableProps) {
                       }
                     />
 
-                    {/* Modal Eliminar */}
                     <CustomModal
                       content={
-                        <AprobarSolicitudContent
-                          codigoSolicitud={`BODEGA-${bodega.idBodega}`}
+                        <EliminarItemContent
+                          entityLabel="Bodega"
+                          itemName={bodega.nombreBodega}
+                          itemId={bodega.idBodega}
+                          category="bodegas"
+                          warningMessage="Se perderán todos los datos asociados a esta bodega."
+                          withComment
+                          onSuccess={() =>
+                            console.log("Bodega eliminada correctamente")
+                          }
                         />
                       }
                       title="Eliminar Bodega"

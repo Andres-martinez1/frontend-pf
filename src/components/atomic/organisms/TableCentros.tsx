@@ -10,10 +10,10 @@ import { Tooltip } from "@heroui/tooltip";
 import { EyeIcon, CheckIcon, Plus } from "lucide-react";
 import CustomModal from "../molecules/Modal";
 import FormSoli from "./SolicitudDetalle";
-import AprobarSolicitudContent from "./AprobarSolicitudContent";
 import BarraBusqueda from "../molecules/BarraBusqueda";
 import { Centro } from "../../../types/Centros/Centro";
 import FormCentro from "./FormCentro";
+import EliminarItemContent from "./Eliminar";
 
 type CentrosTableProps = {
   titulo: string;
@@ -31,7 +31,7 @@ export default function CentrosTable({ titulo, data }: CentrosTableProps) {
         <BarraBusqueda />
 
         <CustomModal
-          content={<FormCentro></FormCentro>} 
+          content={<FormCentro></FormCentro>}
           title="Nuevo Centro"
           ButtonLabel="Nuevo Centro"
           cancelLabel="Cancelar"
@@ -69,14 +69,11 @@ export default function CentrosTable({ titulo, data }: CentrosTableProps) {
                 className="hover:bg-gray-100 transition-colors duration-200"
               >
                 <TableCell>{centro.idCentro}</TableCell>
-                <TableCell >
-                  {centro.nombreCentro}
-                </TableCell>
+                <TableCell>{centro.nombreCentro}</TableCell>
                 <TableCell>{centro.municipio}</TableCell>
                 <TableCell>{centro.sede.nombreSede}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    {/* Modal Detalle */}
                     <CustomModal
                       content={
                         <FormSoli
@@ -119,17 +116,28 @@ export default function CentrosTable({ titulo, data }: CentrosTableProps) {
                       }
                     />
 
-                    {/* Modal Aprobar */}
                     <CustomModal
-                      content={<AprobarSolicitudContent codigoSolicitud="ssss" />}
-                      title="Aprobar Solicitud"
+                      content={
+                        <EliminarItemContent
+                          entityLabel="Centro"
+                          itemName={centro.nombreCentro}
+                          itemId={centro.idCentro}
+                          category="centros"
+                          warningMessage="Se perderán todos los datos asociados a este centro."
+                          withComment
+                          onSuccess={() =>
+                            console.log("Centro eliminado correctamente")
+                          }
+                        />
+                      }
+                      title="Eliminar Centro"
                       cancelLabel="Cancelar"
-                      confirmLabel="Aprobar"
+                      confirmLabel="Eliminar"
                       ButtonLabel=""
                       BgColor="transparent"
                       cancelBgColor="gray"
-                      confirmBgColor="#068500"
-                      bordeconfirm="#044700"
+                      confirmBgColor="#d32f2f"
+                      bordeconfirm="#a10f0f"
                       cancelTextColor="white"
                       confirmTextColor="white"
                       size="sm"
@@ -140,7 +148,7 @@ export default function CentrosTable({ titulo, data }: CentrosTableProps) {
                       shadow="lg"
                       trigger={
                         <Tooltip content="Eliminar">
-                          <CheckIcon className="w-6 h-6 text-gray-500 hover:text-blue-500 border rounded-md" />
+                          <CheckIcon className="w-6 h-6 text-gray-500 hover:text-red-600 border rounded-md" />
                         </Tooltip>
                       }
                     />

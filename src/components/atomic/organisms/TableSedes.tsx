@@ -12,6 +12,7 @@ import CustomModal from "../molecules/Modal";
 import BarraBusqueda from "../molecules/BarraBusqueda";
 import { Sede } from "../../../types/Sedes/Sede";
 import FormSede from "./FormSedes";
+import EliminarItemContent from "./Eliminar";
 
 type SedesTableProps = {
   titulo: string;
@@ -37,7 +38,7 @@ export default function SedesTable({ titulo, data }: SedesTableProps) {
         <BarraBusqueda />
 
         <CustomModal
-          content={<FormSede/>}
+          content={<FormSede />}
           title="Nueva Sede"
           ButtonLabel="Nueva Sede"
           cancelLabel="Cancelar"
@@ -112,13 +113,66 @@ export default function SedesTable({ titulo, data }: SedesTableProps) {
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    <Tooltip content="Ver Detalles">
-                      <EyeIcon className="w-6 h-6 text-gray-500 hover:text-blue-500 border rounded-md cursor-pointer" />
-                    </Tooltip>
+                    <CustomModal
+                      content={<FormSede />}
+                      title="Detalle Rol"
+                      cancelLabel=""
+                      confirmLabel="Cerrar"
+                      ButtonLabel=""
+                      BgColor="transparent"
+                      cancelBgColor=""
+                      confirmBgColor="#1A1A36"
+                      cancelTextColor="white"
+                      confirmTextColor="white"
+                      size="2xl"
+                      radius="lg"
+                      backdrop="opaque"
+                      placement="center"
+                      scrollBehavior="inside"
+                      shadow="lg"
+                      trigger={
+                        <Tooltip content="Ver / Editar">
+                          <EyeIcon className="w-6 h-6 text-gray-500 hover:text-blue-500 border rounded-md" />
+                        </Tooltip>
+                      }
+                    />
 
-                    <Tooltip content="Aprobar">
-                      <CheckIcon className="w-6 h-6 text-gray-500 hover:text-green-600 border rounded-md cursor-pointer" />
-                    </Tooltip>
+                    <CustomModal
+                      content={
+                        <EliminarItemContent
+                          entityLabel="Sede"
+                          itemName={sede.nombreSede}
+                          itemId={sede.idSedes}
+                          category="sedes"
+                          warningMessage="Se eliminarán todas las áreas, bodegas y fichas asociadas a esta sede."
+                          withComment
+                          onSuccess={() =>
+                            console.log("Sede eliminada correctamente")
+                          }
+                        />
+                      }
+                      title="Eliminar Sede"
+                      cancelLabel="Cancelar"
+                      confirmLabel="Eliminar"
+                      ButtonLabel=""
+                      BgColor="transparent"
+                      cancelBgColor="gray"
+                      confirmBgColor="#d32f2f"
+                      bordeconfirm="#a10f0f"
+                      cancelTextColor="white"
+                      confirmTextColor="white"
+                      size="sm"
+                      radius="lg"
+                      backdrop="opaque"
+                      placement="center"
+                      scrollBehavior="inside"
+                      shadow="lg"
+                      trigger={
+                        <Tooltip content="Eliminar">
+                          <CheckIcon className="w-6 h-6 text-gray-500 hover:text-red-600 border rounded-md cursor-pointer" />
+                        </Tooltip>
+                      }
+                    />
                   </div>
                 </TableCell>
               </TableRow>
