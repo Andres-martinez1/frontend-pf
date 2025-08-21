@@ -1,3 +1,5 @@
+// /components/atomic/templates/GesTablesUser.tsx
+
 import { Grid, Warehouse, Landmark, Boxes } from "lucide-react";
 import CardTable from "../organisms/CardTable";
 import CardTitulo from "../organisms/CardTitulo";
@@ -31,7 +33,7 @@ const GesTablesUser = ({
   municipiosData = [],
   programasData = [],
   rolesData = [],
-  sedesData = [],
+  sedesData = [], // <-- Recibes las sedes correctamente
 }: {
   areasData: Area[];
   bodegaElementosData: Elemento[];
@@ -54,7 +56,9 @@ const GesTablesUser = ({
       categoria: "areas",
       registros: areasData.length,
       icon: <Grid size={20} />,
-      modalContent: <AreasTable titulo="Tabla de Áreas" data={areasData} />,
+      // --- ¡AQUÍ ESTÁ LA CORRECCIÓN! ---
+      // Simplemente añadimos la prop `sedes` que le faltaba a AreasTable.
+      modalContent: <AreasTable titulo="Tabla de Áreas" data={areasData} sedes={sedesData} />,
     },
     {
       titulo: "Bodegas",
