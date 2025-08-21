@@ -31,6 +31,23 @@ type ModalPermisosProps = {
   modulos: Modulo[];
 };
 
+type FormData = {
+  nombre: string;
+  apellidos: string;
+  identificacion: string;
+  correo: string;
+  contrasena: string;
+  img?: string | null;
+  estado: string;
+  ubicacion: string;
+  fechaIngreso?: string | null;
+  habilidadesTecnicas: string;
+  rol: string;
+  area: string;
+  fkIdArea?: { idArea: number };
+  fkIdRol?: { idRol: number };
+};
+
 const PERMISOS_DEFAULT: Omit<Permiso, "id">[] = [
   {
     nombre: "Ver",
@@ -61,13 +78,19 @@ const PERMISOS_DEFAULT: Omit<Permiso, "id">[] = [
 export default function CreateUser({ modulos }: ModalPermisosProps) {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [selected, setSelected] = useState<Record<string, string[]>>({});
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     nombre: "",
+    apellidos: "",
+    identificacion: "",
     correo: "",
+    contrasena: "",
+    img: "",
+    estado: "Activo",
+    ubicacion: "",
+    fechaIngreso: "",
+    habilidadesTecnicas: "",
     rol: "Administrador",
     area: "",
-    estado: "Activo",
-    contrasena: "",
   });
 
   const toggleExpand = (id: string) => {
@@ -86,19 +109,52 @@ export default function CreateUser({ modulos }: ModalPermisosProps) {
 
   return (
     <div className="space-y-8">
+      {/* 🔹 Datos básicos del usuario */}
       <div className="space-y-6 bg-white p-6 rounded-xl shadow-md">
+        {/* Nombre y Apellidos */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Nombre Completo
+              Nombre
             </label>
             <CustomInput
-              placeholder="Nombre Completo"
+              placeholder="Nombre"
               type="text"
               width="full"
               value={formData.nombre}
+              onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
+              label={""}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Apellidos
+            </label>
+            <CustomInput
+              placeholder="Apellidos"
+              type="text"
+              width="full"
+              value={formData.apellidos}
+              onChange={(e) => setFormData({ ...formData, apellidos: e.target.value })}
+              label={""}
+            />
+          </div>
+        </div>
+
+        {/* Identificación y Correo */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Identificación
+            </label>
+            <CustomInput
+              placeholder="Identificación"
+              type="text"
+              width="full"
+              value={formData.identificacion}
               onChange={(e) =>
-                setFormData({ ...formData, nombre: e.target.value })
+                setFormData({ ...formData, identificacion: e.target.value })
               }
               label={""}
             />
@@ -121,6 +177,7 @@ export default function CreateUser({ modulos }: ModalPermisosProps) {
           </div>
         </div>
 
+        {/* Rol y Área */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -149,14 +206,13 @@ export default function CreateUser({ modulos }: ModalPermisosProps) {
               type="text"
               width="full"
               value={formData.area}
-              onChange={(e) =>
-                setFormData({ ...formData, area: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, area: e.target.value })}
               label={""}
             />
           </div>
         </div>
 
+        {/* Estado y Contraseña */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -190,8 +246,110 @@ export default function CreateUser({ modulos }: ModalPermisosProps) {
             />
           </div>
         </div>
+
+        {/* Ubicación y Fecha de Ingreso */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Ubicación
+            </label>
+            <CustomInput
+              placeholder="Ubicación"
+              type="text"
+              width="full"
+              value={formData.ubicacion}
+              onChange={(e) =>
+                setFormData({ ...formData, ubicacion: e.target.value })
+              }
+              label={""}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Fecha de Ingreso
+            </label>
+            <CustomInput
+              placeholder="Fecha de Ingreso"
+              type="date"
+              width="full"
+              value={formData.fechaIngreso || ""}
+              onChange={(e) =>
+                setFormData({ ...formData, fechaIngreso: e.target.value })
+              }
+              label={""}
+            />
+          </div>
+        </div>
+
+        {/* Habilidades Técnicas e Imagen */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Habilidades Técnicas
+            </label>
+            <CustomInput
+              placeholder="Habilidades Técnicas"
+              type="text"
+              width="full"
+              value={formData.habilidadesTecnicas}
+              onChange={(e) =>
+                setFormData({ ...formData, habilidadesTecnicas: e.target.value })
+              }
+              label={""}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Imagen
+            </label>
+            <CustomInput
+              placeholder="URL de la imagen"
+              type="text"
+              width="full"
+              value={formData.img || ""}
+              onChange={(e) => setFormData({ ...formData, img: e.target.value })}
+              label={""}
+            />
+          </div>
+        </div>
+
+        {/* Área y Rol select */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Área (Select)
+            </label>
+            <CustomSelect
+              items={[] /* aquí pones las áreas disponibles */}
+              selectionMode="single"
+              onChange={(value) =>
+                setFormData({ ...formData, fkIdArea: { idArea: Number(value) } })
+              }
+              titulo={""}
+              planceholder={"Seleccione un área"}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Rol (Select)
+            </label>
+            <CustomSelect
+              items={[] /* aquí pones los roles disponibles */}
+              selectionMode="single"
+              onChange={(value) =>
+                setFormData({ ...formData, fkIdRol: { idRol: Number(value) } })
+              }
+              titulo={""}
+              planceholder={"Seleccione un rol"}
+            />
+          </div>
+        </div>
       </div>
 
+      {/* 🔹 Tipos de permisos */}
       <div className="bg-gray-50 p-4 rounded-xl shadow-sm border border-gray-200">
         <h2 className="text-base font-semibold text-blue-800 mb-3">
           Tipos de Permisos
@@ -212,6 +370,7 @@ export default function CreateUser({ modulos }: ModalPermisosProps) {
         </div>
       </div>
 
+      {/* 🔹 Permisos por módulo */}
       <div className="max-h-[400px] overflow-y-auto pr-2">
         <div className="space-y-4">
           {modulos.map((modulo) => {
@@ -230,9 +389,7 @@ export default function CreateUser({ modulos }: ModalPermisosProps) {
                     {modulo.icon || <Users className="text-blue-700" />}
                     <div>
                       <h4 className="font-semibold">{modulo.nombre}</h4>
-                      <p className="text-sm text-gray-500">
-                        {modulo.descripcion}
-                      </p>
+                      <p className="text-sm text-gray-500">{modulo.descripcion}</p>
                     </div>
                   </div>
 
@@ -247,13 +404,11 @@ export default function CreateUser({ modulos }: ModalPermisosProps) {
                     )}
                     <CustomBoton
                       titulo={expanded === modulo.id ? "Ocultar" : "Ver detalles"}
-                      icon={
-                        expanded === modulo.id ? (
-                          <ChevronUp size={16} />
-                        ) : (
-                          <ChevronDown size={16} />
-                        )
-                      }
+                      icon={expanded === modulo.id ? (
+                        <ChevronUp size={16} />
+                      ) : (
+                        <ChevronDown size={16} />
+                      )}
                       onClick={() => toggleExpand(modulo.id)}
                       bgColor="#f0f9ff"
                       textColor="#1d4ed8"
