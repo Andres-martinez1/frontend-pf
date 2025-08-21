@@ -22,43 +22,31 @@ import { Rol } from "../../../types/Roles/Rol";
 import SedesTable from "../organisms/TableSedes";
 import { Sede } from "../../../types/Sedes/Sede";
 
-// ✅ CORRECCIÓN 1: El componente ahora recibe 'centrosData' como una nueva prop.
+
 const GesTablesUser = ({
   areasData = [],
   bodegaElementosData = [],
   bodegasData = [],
-  centrosData = [],
+  fichasData = [],
+  municipiosData = [],
+  programasData = [],
+  rolesData = [],
+  sedesData = [],
 }: {
   areasData: Area[];
   bodegaElementosData: Elemento[];
   bodegasData: Bodega[];
-  centrosData: Centro[];
+  fichasData: Ficha[];
+  municipiosData: Municipio[];
+  programasData: Programa[];
+  rolesData: Rol[];
+  sedesData: Sede[]; 
 }) => {
 
-  // ✅ El resto de los datos de prueba se mantienen intactos.
-  const sedesData: Sede[] = [ /* ... */ ];
-  const rolesData: Rol[] = [ /* ... */ ];
-  const municipiosData: Municipio[] = [ /* ... */ ];
-  const fichasData: Ficha[] = [ /* ... */ ];
-  const programasData: Programa[] = [ /* ... */ ];
 
-  // ❌ ELIMINADO: Ya no se necesitan los datos de prueba para 'centrosData'
-  /*
-  const centrosData: Centro[] = [
-    {
-      idCentro: 1,
-      nombreCentro: "Centro Tecnológico",
-      // ...
-    },
-    {
-      idCentro: 2,
-      nombreCentro: "Centro Gastronómico",
-      // ...
-    },
-  ];
-  */
+  const centrosData: Centro[] = [ ];
 
-  // 🔹 Configuración de las tablas
+
   const tablas = [
     {
       titulo: "Áreas",
@@ -82,10 +70,8 @@ const GesTablesUser = ({
       titulo: "Centros",
       descripcion: "Gestión de centros y sedes",
       categoria: "centros",
-      // ✅ CORRECCIÓN 2: Usamos la longitud de los datos de la prop 'centrosData'
       registros: centrosData.length,
       icon: <Landmark size={20} />,
-      // ✅ CORRECCIÓN 3: Pasamos los datos de la prop a la tabla de Centros
       modalContent: (
         <CentrosTable titulo="Tabla de Centros" data={centrosData} />
       ),
@@ -100,7 +86,6 @@ const GesTablesUser = ({
         <ElementosTable titulo="Tabla de Elementos" data={bodegaElementosData} />
       ),
     },
-    // ... (resto de las tablas sin cambios)
     {
       titulo: "Fichas",
       descripcion: "Gestión de fichas y programas",
@@ -137,13 +122,14 @@ const GesTablesUser = ({
       icon: <Grid size={20} />,
       modalContent: <RolesTable titulo="Tabla de Roles" data={rolesData} />,
     },
+    
     {
       titulo: "Sedes",
       descripcion: "Gestión de sedes institucionales",
       categoria: "sedes",
-      registros: sedesData.length,
+      registros: sedesData.length, 
       icon: <Landmark size={20} />,
-      modalContent: <SedesTable titulo="Tabla de Sedes" data={sedesData} />,
+      modalContent: <SedesTable titulo="Tabla de Sedes" data={sedesData} />, 
     },
   ];
 
