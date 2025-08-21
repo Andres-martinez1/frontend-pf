@@ -16,7 +16,6 @@ const tiposAnalisis = [
   { value: "inventario", label: "Inventario y Stock", icon: ClipboardDocumentListIcon },
   { value: "vencimientos", label: "Vencimientos y Alertas", icon: ExclamationTriangleIcon },
   { value: "movimientos", label: "Movimientos y Rotaciones", icon: ChartBarIcon },
-  { value: "eficiencia", label: "Eficiencia y Rendimiento", icon: FunnelIcon },
 ];
 
 const estadosEspecificos: Record<string, { value: string; label: string }[]> = {
@@ -37,13 +36,6 @@ const estadosEspecificos: Record<string, { value: string; label: string }[]> = {
     { value: "alta", label: "Alta Rotación" },
     { value: "media", label: "Media Rotación" },
     { value: "baja", label: "Baja Rotación" },
-    { value: "sin", label: "Sin Movimientos" },
-  ],
-  eficiencia: [
-    { value: "alta", label: "Alta Eficiencia" },
-    { value: "media", label: "Media Eficiencia" },
-    { value: "baja", label: "Baja Eficiencia" },
-    { value: "movimiento", label: "Alto Movimiento" },
   ],
 };
 
