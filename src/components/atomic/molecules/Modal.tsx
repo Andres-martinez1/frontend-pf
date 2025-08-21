@@ -14,6 +14,7 @@ type CustomModalProps = {
   title: string;
   cancelLabel: string;
   confirmLabel: string;
+  onConfirm?: () => void;
   ButtonLabel?: string;
   BgColor?: string;
   cancelBgColor: string;

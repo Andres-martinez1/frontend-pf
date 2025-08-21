@@ -1,3 +1,5 @@
+// /components/atomic/organisms/AreasTable.tsx
+
 import { useState } from "react";
 import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from "@heroui/table";
 import { Tooltip } from "@heroui/tooltip";
@@ -17,7 +19,8 @@ type AreasTableProps = {
 };
 
 export default function AreasTable({ titulo, data, sedes = [] }: AreasTableProps) {
-  const columns = ["ID", "Nombre Área", "Sede", "Usuario", "Acciones"];
+  // --- CORRECCIÓN 1: Se elimina "Usuario" de la lista de columnas ---
+  const columns = ["ID", "Nombre Área", "Sede", "Acciones"];
   const [searchTerm, setSearchTerm] = useState("");
   const { crearArea, actualizarArea, eliminarArea } = useAreas();
 
@@ -29,36 +32,23 @@ export default function AreasTable({ titulo, data, sedes = [] }: AreasTableProps
     : data;
 
   const handleCreateArea = (nuevaArea: Omit<Area, "idArea">) => {
-    
     const dataParaApi = {
       nombreArea: nuevaArea.nombreArea,
       sedeId: nuevaArea.fkIdSedes.idSedes, 
     };
-
-    crearArea.mutate(dataParaApi, {
-      onSuccess: () => { console.log("¡Área creada con éxito!"); },
-      onError: (error) => { console.error("Error al crear el área:", error); alert("Hubo un error al crear el área."); }
-    });
+    crearArea.mutate(dataParaApi);
   };
 
   const handleUpdateArea = (areaActualizada: Area) => {
-    
     const dataParaApi = {
       nombreArea: areaActualizada.nombreArea,
       sedeId: areaActualizada.fkIdSedes.idSedes,
     };
-    
-    actualizarArea.mutate({ id: areaActualizada.idArea, data: dataParaApi }, {
-      onSuccess: () => { console.log("¡Área actualizada con éxito!"); },
-      onError: (error) => { console.error("Error al actualizar el área:", error); alert("Hubo un error al actualizar el área."); }
-    });
+    actualizarArea.mutate({ id: areaActualizada.idArea, data: dataParaApi });
   };
 
   const handleDeleteArea = (idAreaToDelete: number) => {
-    eliminarArea.mutate(idAreaToDelete, {
-      onSuccess: () => { console.log("¡Área eliminada con éxito!"); },
-      onError: (error) => { console.error("Error al eliminar el área:", error); alert("Hubo un error al eliminar el área."); }
-    });
+    eliminarArea.mutate(idAreaToDelete);
   };
 
   return (
@@ -86,21 +76,10 @@ export default function AreasTable({ titulo, data, sedes = [] }: AreasTableProps
           content={<FormPostArea
             sedesDisponibles={sedes}
             onFormSubmit={handleCreateArea}
-            onCancel={() => {}}
-            isLoading={crearArea.isPending} 
-          />}
+            onCancel={() => { } }
+            isLoading={crearArea.isPending} />}
           cancelLabel=""
-          confirmLabel=""
-          cancelBgColor=""
-          confirmBgColor=""
-          cancelTextColor=""
-          confirmTextColor=""
-          radius="sm"
-          backdrop="transparent"
-          placement="center"
-          scrollBehavior="normal"
-          shadow="sm"
-        />
+          confirmLabel="" cancelBgColor={""} confirmBgColor={""} cancelTextColor={""} confirmTextColor={""} radius={"sm"} backdrop={"transparent"} placement={"center"} scrollBehavior={"normal"} shadow={"sm"}        />
       </div>
       <div className="overflow-x-auto">
         <Table aria-label="Tabla de Áreas" removeWrapper>
@@ -117,67 +96,43 @@ export default function AreasTable({ titulo, data, sedes = [] }: AreasTableProps
                 <TableCell>{area.idArea}</TableCell>
                 <TableCell>{area.nombreArea}</TableCell>
                 <TableCell>{area.fkIdSedes.nombreSede}</TableCell>
+                
+                {/* --- CORRECCIÓN 2: Se elimina la celda que mostraba los datos del usuario --- */}
+                {/* 
                 <TableCell>
                   {area.usuarios?.map(u => `${u.nombres} ${u.apellidos}`).join(", ") || 
                    <span className="text-gray-400">Sin usuario</span>}
                 </TableCell>
+                */}
+
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <CustomModal
                       title="Editar Área"
                       size="2xl"
-                      trigger={
-                        <Tooltip content="Editar Área">
-                          <PencilIcon className="w-6 h-6 text-gray-500 hover:text-blue-500 cursor-pointer border rounded-md p-1" />
-                        </Tooltip>
-                      }
+                      trigger={<Tooltip content="Editar Área">
+                        <PencilIcon className="w-6 h-6 text-gray-500 hover:text-blue-500 cursor-pointer border rounded-md p-1" />
+                      </Tooltip>}
                       content={<FormEditArea
                         areaAEditar={area}
                         sedesDisponibles={sedes}
                         onFormSubmit={handleUpdateArea}
-                        onCancel={() => {}}
-                        isLoading={actualizarArea.isPending} 
-                      />}
+                        onCancel={() => { } }
+                        isLoading={actualizarArea.isPending} />}
                       cancelLabel=""
-                      confirmLabel=""
-                      cancelBgColor=""
-                      confirmBgColor=""
-                      cancelTextColor=""
-                      confirmTextColor=""
-                      radius="sm"
-                      backdrop="transparent"
-                      placement="center"
-                      scrollBehavior="normal"
-                      shadow="sm"
-                    />
+                      confirmLabel="" cancelBgColor={""} confirmBgColor={""} cancelTextColor={""} confirmTextColor={""} radius={"sm"} backdrop={"transparent"} placement={"center"} scrollBehavior={"normal"} shadow={"sm"}                    />
                     <CustomModal
                       title="Confirmar Eliminación"
                       size="md"
                       confirmLabel="Eliminar"
                       cancelLabel="Cancelar"
-                      confirmBgColor="bg-red-600"
-                      confirmTextColor="text-white"
-                      cancelBgColor="bg-gray-300"
-                      cancelTextColor="text-gray-700"
-                      radius="sm"
-                      backdrop="transparent"
-                      placement="center"
-                      scrollBehavior="normal"
-                      shadow="sm"
                       onConfirm={() => handleDeleteArea(area.idArea)}
-                      trigger={
-                        <Tooltip content="Eliminar Área">
-                          <Trash2 className="w-6 h-6 text-gray-500 hover:text-red-600 cursor-pointer border rounded-md p-1" />
-                        </Tooltip>
-                      }
-                      content={<EliminarItemContent 
+                      trigger={<Tooltip content="Eliminar Área">
+                        <Trash2 className="w-6 h-6 text-gray-500 hover:text-red-600 cursor-pointer border rounded-md p-1" />
+                      </Tooltip>}
+                      content={<EliminarItemContent
                         itemName={area.nombreArea}
-                        warningMessage="Se perderán todos los datos asociados a esta área."
-                        entityLabel=""
-                        itemId={area.idArea}
-                        category=""
-                      />}
-                    />
+                        warningMessage="Se perderán todos los datos asociados a esta área." entityLabel={""} itemId={0} category={""} />} cancelBgColor={""} confirmBgColor={""} cancelTextColor={""} confirmTextColor={""} radius={"sm"} backdrop={"transparent"} placement={"center"} scrollBehavior={"normal"} shadow={"sm"}                    />
                   </div>
                 </TableCell>
               </TableRow>
