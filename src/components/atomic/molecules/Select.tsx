@@ -10,10 +10,11 @@ type CustomSelectProps = {
   planceholder: string;
   items: SelectItemType[];
   selectionMode: "single" | "multiple";
+  value?: string; // 1. AÑADIR LA PROP 'value' PARA RECIBIR EL VALOR SELECCIONADO
   variant?: "flat" | "bordered" | "faded" | "underlined";
   color?: "default" | "primary" | "secondary" | "success" | "warning" | "danger";
   size?: "sm" | "md" | "lg";
-  width?: string; 
+  width?: string;
   radius?: "none" | "sm" | "md" | "lg" | "full";
   labelPlacement?: "inside" | "outside" | "outside-left";
   onChange?: (value: string) => void;
@@ -25,6 +26,7 @@ export default function CustomSelect({
   planceholder,
   items,
   selectionMode,
+  value, // 2. RECIBIR LA PROP 'value'
   variant = "flat",
   color = "default",
   size = "md",
@@ -42,6 +44,7 @@ export default function CustomSelect({
       label={titulo}
       placeholder={planceholder}
       selectionMode={selectionMode}
+      value={value} // 3. PASAR LA PROP 'value' AL COMPONENTE <Select> DE LA LIBRERÍA
       variant={variant}
       color={color}
       size={size}

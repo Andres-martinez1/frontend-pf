@@ -137,7 +137,24 @@ export default function CustomTableUser({ titulo, data, onAction }: CustomTableU
                   <div className="flex gap-3">
                     {/* Editar */}
                     <CustomModal
-                      content={<EditarUser/>}
+                      content={<EditarUser usuario={{
+                        nombre: "",
+                        apellidos: "",
+                        identificacion: "",
+                        correo: "",
+                        contrasena: "",
+                        img: undefined,
+                        estado: "",
+                        ubicacion: "",
+                        fechaIngreso: undefined,
+                        habilidadesTecnicas: "",
+                        rol: "",
+                        area: "",
+                        fkIdArea: undefined,
+                        fkIdRol: undefined
+                      }} onClose={function (): void {
+                        throw new Error("Function not implemented.");
+                      } }/>}
                       title="Editar Usuario"
                       cancelLabel="Cancelar"
                       confirmLabel="Guardar"
