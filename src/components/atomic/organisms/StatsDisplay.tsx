@@ -1,5 +1,4 @@
 import React from "react";
-import AISPA, { BodegaElemento as BodegaElementoActivos } from "../organisms/InventarioActivos";
 import StockCritico from "../organisms/StockCritico"; // nuevo componente para stock crítico
 import { SearchIcon } from "lucide-react";
 import StockBajo from "./StockBajo";
@@ -12,6 +11,7 @@ import StockNormal from "./StockNormal";
 import MovimientosStats, { Movimiento } from "./MovimientoE";
 import MovimientosMediaRotacion from "./MediaRotacion";
 import MovimientosBajaRotacion from "./BajaRotacion";
+import ProductosActivos from "./InventarioActivos";
 
 type Props = {
   tipo: string | null;
@@ -176,7 +176,7 @@ const StatsDisplay: React.FC<Props> = ({ tipo, estado }) => {
   // Mapeo de filtros a componentes de gráficos
   const filterMap: Record<string, Record<string, JSX.Element>> = {
     inventario: {
-      activos: <AISPA productosActivos={productosSimuladosActivos} historicoStock={historicoSimulado} />,
+      activos: <ProductosActivos />,
       critico: <StockCritico productosCriticos={productosSimuladosActivos.filter(p => p.stockActual < (p.stockMinimo || 0))} historicoCritico={historicoSimulado} />,
       bajo: <StockBajo productosBajos={productosSimuladosActivos} historicoBajo={historicoSimulado} />,
       disponibles: <StockDisponible productosDisponibles={productosSimuladosActivos} historicoDisponible={historicoSimulado} />,

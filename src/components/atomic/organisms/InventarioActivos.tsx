@@ -1,98 +1,110 @@
-import CustomCard from "../molecules/Card";
-import {
-  BarChart,
-  Bar,
-  PieChart,
-  Pie,
-  Cell,
-  LineChart,
-  Line,
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, RadarChart, PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar } from "recharts";
 
-export type Bodega = { idBodega: number; nombreBodega: string };
-export type Elemento = { idElemento: number; nombreElemento: string };
+export default function ProductosActivos() {
+  // Datos de prueba (mock)
+  const dataCategorias = [
+    { name: "Electrónicos", value: 120 },
+    { name: "Muebles", value: 90 },
+    { name: "Herramientas", value: 60 },
+    { name: "Herramientas", value: 60 },
+    { name: "Herramientas", value: 60 },
+    { name: "Herramientas", value: 60 },
+    { name: "Herramientas", value: 60 },
+    { name: "Otros", value: 30 },
+  ];
 
-export type BodegaElemento = {
-  id: number;
-  stockActual: number;
-  stockMinimo: number | null;
-  fkIdBodega: Bodega;
-  fkIdElemento: Elemento;
-};
+  const dataDisponibilidad = [
+    { name: "Disponibles", value: 220 },
+    { name: "Prestados", value: 80 },
+  ];
 
-export interface AISPAProps {
-  productosActivos: BodegaElemento[];
-  historicoStock: { fecha: string; cantidad: number }[];
-}
+  const dataTopProductos = [
+    { name: "Laptop", cantidad: 50 },
+    { name: "Silla", cantidad: 40 },
+    { name: "Proyector", cantidad: 30 },
+    { name: "Mesa", cantidad: 20 },
+    { name: "Mesa", cantidad: 20 },
+    { name: "Mesa", cantidad: 20 },
+    { name: "Mesa", cantidad: 20 },
+    { name: "Mesa", cantidad: 20 },
+  ];
 
-const COLORS = ["#4F46E5", "#3B82F6", "#10B981", "#F59E0B", "#EF4444"];
+  const dataTendencia = [
+    { mes: "Ene", activos: 180 },
+    { mes: "Feb", activos: 200 },
+    { mes: "Mar", activos: 220 },
+    { mes: "Abr", activos: 210 },
+    { mes: "May", activos: 230 },
+  ];
 
-export default function AISPA({ productosActivos, historicoStock }: AISPAProps) {
-  const barData = productosActivos.map((be) => ({
-    nombreProducto: be.fkIdElemento.nombreElemento,
-    cantidad: be.stockActual,
-  }));
-
-  const pieData = barData;
+  const COLORS = ["#0077B6", "#00B4D8", "#90E0EF", "#03045E", "#CAF0F8"];
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-      <CustomCard conten="Stock por producto">
-        <ResponsiveContainer width="100%" height={250}>
-          <BarChart data={barData}>
-            <XAxis dataKey="nombreProducto" />
+      {/* Gráfica 1: Activos por Categoría */}
+      <div className="bg-white shadow-lg rounded-2xl p-4">
+        <h2 className="text-lg font-semibold mb-4 text-gray-700">Productos Activos por Categoría</h2>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={dataCategorias}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
             <YAxis />
             <Tooltip />
-            <Bar dataKey="cantidad" fill="#4F46E5" />
+            <Bar dataKey="value" fill="#0077B6" radius={[8, 8, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
-      </CustomCard>
+      </div>
 
-      <CustomCard conten="Distribución de stock">
-        <ResponsiveContainer width="100%" height={250}>
+      {/* Gráfica 2: Disponibilidad (Pie) */}
+      <div className="bg-white shadow-lg rounded-2xl p-4">
+        <h2 className="text-lg font-semibold mb-4 text-gray-700">Disponibilidad de Productos</h2>
+        <ResponsiveContainer width="100%" height={300}>
           <PieChart>
             <Pie
-              data={pieData}
-              dataKey="cantidad"
-              nameKey="nombreProducto"
-              outerRadius={80}
+              data={dataDisponibilidad}
+              cx="50%"
+              cy="50%"
+              labelLine={false}
+              outerRadius={100}
+              fill="#8884d8"
+              dataKey="value"
+              label={({ name, value }) => `${name}: ${value}`}
             >
-              {pieData.map((_entry, index) => (
+              {dataDisponibilidad.map((_, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Pie>
             <Tooltip />
           </PieChart>
         </ResponsiveContainer>
-      </CustomCard>
+      </div>
 
-      <CustomCard conten="Evolución del stock">
-        <ResponsiveContainer width="100%" height={250}>
-          <LineChart data={historicoStock}>
-            <XAxis dataKey="fecha" />
+ {/* Gráfica 3: Top 5 Productos (Radar) */}
+<div className="bg-white shadow-lg rounded-2xl p-4">
+  <h2 className="text-lg font-semibold mb-4 text-gray-700">Top 5 Productos Activos</h2>
+  <ResponsiveContainer width="100%" height={300}>
+    <RadarChart cx="50%" cy="50%" outerRadius="80%" data={dataTopProductos}>
+      <PolarGrid />
+      <PolarAngleAxis dataKey="name" />
+      <PolarRadiusAxis />
+      <Radar name="Cantidad" dataKey="cantidad" stroke="#00B4D8" fill="#00B4D8" fillOpacity={0.6} />
+      <Tooltip />
+    </RadarChart>
+  </ResponsiveContainer>
+</div>
+      {/* Gráfica 4: Tendencia mensual */}
+      <div className="bg-white shadow-lg rounded-2xl p-4">
+        <h2 className="text-lg font-semibold mb-4 text-gray-700">Tendencia de Activos por Mes</h2>
+        <ResponsiveContainer width="100%" height={300}>
+          <LineChart data={dataTendencia}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="mes" />
             <YAxis />
             <Tooltip />
-            <Line type="monotone" dataKey="cantidad" stroke="#10B981" />
+            <Line type="monotone" dataKey="activos" stroke="#03045E" strokeWidth={3} dot={{ r: 5 }} />
           </LineChart>
         </ResponsiveContainer>
-      </CustomCard>
-
-      <CustomCard conten="Volumen acumulado del stock">
-        <ResponsiveContainer width="100%" height={250}>
-          <AreaChart data={historicoStock}>
-            <XAxis dataKey="fecha" />
-            <YAxis />
-            <Tooltip />
-            <Area type="monotone" dataKey="cantidad" fill="#3B82F6" stroke="#3B82F6" />
-          </AreaChart>
-        </ResponsiveContainer>
-      </CustomCard>
+      </div>
     </div>
   );
 }

@@ -1,21 +1,17 @@
 import CustomCard from "../molecules/Card";
 import {
   ResponsiveContainer,
-  Treemap,
-  Tooltip,
-  FunnelChart,
-  Funnel,
-  LabelList,
-  ScatterChart,
-  Scatter,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
+  Tooltip,
+  PieChart,
+  Pie,
+  Cell,
+  LineChart,
+  Line,
   CartesianGrid,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  Radar,
 } from "recharts";
 
 export type Bodega = { idBodega: number; nombreBodega: string };
@@ -27,13 +23,14 @@ export type BodegaElemento = {
   stockMinimo: number | null;
   fkIdBodega: Bodega;
   fkIdElemento: Elemento;
-  cantidadPrestada: number; // nueva propiedad para préstamo
+  cantidadPrestada: number;
 };
 
 interface StockPrestamoProps {
   productosPrestamo: BodegaElemento[];
 }
 
+const COLORS = ["#3B82F6", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6"];
 
 export default function StockPrestamo({ productosPrestamo }: StockPrestamoProps) {
   const ejemploPrestamo = productosPrestamo.length
@@ -55,95 +52,98 @@ export default function StockPrestamo({ productosPrestamo }: StockPrestamoProps)
           fkIdBodega: { idBodega: 2, nombreBodega: "Bodega Secundaria" },
           fkIdElemento: { idElemento: 2, nombreElemento: "Producto B" },
         },
+        {
+          id: 3,
+          stockActual: 60,
+          stockMinimo: 20,
+          cantidadPrestada: 15,
+          fkIdBodega: { idBodega: 1, nombreBodega: "Bodega Central" },
+          fkIdElemento: { idElemento: 3, nombreElemento: "Producto C" },
+        },
       ];
 
-  // Datos para Treemap
-  const treemapData = ejemploPrestamo.map((be) => ({
-    name: be.fkIdElemento.nombreElemento,
-    size: be.cantidadPrestada,
+  // Comparación préstamo vs stock
+  const barData = ejemploPrestamo.map((be) => ({
+    nombreProducto: be.fkIdElemento.nombreElemento,
+    prestado: be.cantidadPrestada,
+    stock: be.stockActual,
   }));
 
-  // Datos para FunnelChart
-  const funnelData = ejemploPrestamo.map((be) => ({
+  // Distribución de préstamos
+  const pieData = ejemploPrestamo.map((be) => ({
     name: be.fkIdElemento.nombreElemento,
     value: be.cantidadPrestada,
   }));
 
-  // Datos para ScatterChart
-  const scatterData = ejemploPrestamo.map((be) => ({
-    x: be.stockActual,
-    y: be.cantidadPrestada,
-    name: be.fkIdElemento.nombreElemento,
-  }));
-
-  // Datos para RadarChart
-  const radarData = ejemploPrestamo.map((be) => ({
-    subject: be.fkIdElemento.nombreElemento,
-    A: be.cantidadPrestada,
-    fullMark: be.stockActual,
+  // Tendencia (simulada con índice como fecha)
+  const lineData = ejemploPrestamo.map((be, index) => ({
+    fecha: `Registro ${index + 1}`,
+    cantidadPrestada: be.cantidadPrestada,
   }));
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-      {/* Treemap: distribución de productos en préstamo */}
-      <CustomCard conten="Distribución de productos prestados">
+      {/* Comparación: préstamo vs stock */}
+      <CustomCard conten="Préstamos vs stock por producto">
         <ResponsiveContainer width="100%" height={250}>
-          <Treemap
-            data={treemapData}
-            dataKey="size"
-            stroke="#fff"
-            fill="#8884d8"
-          >
+          <BarChart data={barData}>
+            <XAxis dataKey="nombreProducto" />
+            <YAxis />
             <Tooltip />
-          </Treemap>
+            <Bar dataKey="prestado" fill="#EF4444" name="Cantidad Prestada" />
+            <Bar dataKey="stock" fill="#3B82F6" name="Stock Disponible" />
+          </BarChart>
         </ResponsiveContainer>
       </CustomCard>
 
-      {/* FunnelChart: flujo de préstamos */}
-      <CustomCard conten="Cantidad de préstamos por producto">
+      {/* Distribución total de préstamos */}
+      <CustomCard conten="Distribución de préstamos por producto">
         <ResponsiveContainer width="100%" height={250}>
-          <FunnelChart>
-            <Tooltip />
-            <Funnel
+          <PieChart>
+            <Pie
+              data={pieData}
               dataKey="value"
-              data={funnelData}
-              isAnimationActive
-              label={(entry) => entry.name}
+              nameKey="name"
+              outerRadius={80}
+              label
             >
-              <LabelList position="inside" fill="#fff" />
-            </Funnel>
-          </FunnelChart>
+              {pieData.map((_entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip />
+          </PieChart>
         </ResponsiveContainer>
       </CustomCard>
 
-      {/* ScatterChart: relación stock vs préstamo */}
-      <CustomCard conten="Relación stock vs préstamo">
+      {/* Evolución de préstamos */}
+      <CustomCard conten="Evolución de préstamos en el tiempo">
         <ResponsiveContainer width="100%" height={250}>
-          <ScatterChart>
-            <CartesianGrid />
-            <XAxis type="number" dataKey="x" name="Stock Disponible" />
-            <YAxis type="number" dataKey="y" name="Cantidad Prestada" />
-            <Tooltip cursor={{ strokeDasharray: "3 3" }} />
-            <Scatter name="Productos" data={scatterData} fill="#F59E0B" />
-          </ScatterChart>
-        </ResponsiveContainer>
-      </CustomCard>
-
-      {/* RadarChart: comparación de productos con más préstamos */}
-      <CustomCard conten="Comparación de préstamos vs stock">
-        <ResponsiveContainer width="100%" height={250}>
-          <RadarChart cx="50%" cy="50%" outerRadius="80%" data={radarData}>
-            <PolarGrid />
-            <PolarAngleAxis dataKey="subject" />
-            <PolarRadiusAxis />
-            <Radar
-              name="Cantidad Prestada"
-              dataKey="A"
-              stroke="#EF4444"
-              fill="#EF4444"
-              fillOpacity={0.6}
+          <LineChart data={lineData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="fecha" />
+            <YAxis />
+            <Tooltip />
+            <Line
+              type="monotone"
+              dataKey="cantidadPrestada"
+              stroke="#F59E0B"
+              strokeWidth={2}
             />
-          </RadarChart>
+          </LineChart>
+        </ResponsiveContainer>
+      </CustomCard>
+
+      {/* Stock vs Préstamos apilados */}
+      <CustomCard conten="Proporción stock disponible vs préstamos">
+        <ResponsiveContainer width="100%" height={250}>
+          <BarChart data={barData} stackOffset="sign">
+            <XAxis dataKey="nombreProducto" />
+            <YAxis />
+            <Tooltip />
+            <Bar dataKey="stock" stackId="a" fill="#3B82F6" name="Stock Disponible" />
+            <Bar dataKey="prestado" stackId="a" fill="#EF4444" name="Cantidad Prestada" />
+          </BarChart>
         </ResponsiveContainer>
       </CustomCard>
     </div>

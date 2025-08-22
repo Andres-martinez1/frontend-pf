@@ -11,6 +11,8 @@ import {
   Cell,
   AreaChart,
   Area,
+  LineChart,
+  Line,
 } from "recharts";
 
 export type Bodega = { idBodega: number; nombreBodega: string };
@@ -36,8 +38,8 @@ export default function StockCritico({ productosCriticos, historicoCritico }: St
   const ejemploCritico = productosCriticos.length
     ? productosCriticos
     : [
-        { id: 1, stockActual: 5, stockMinimo: 50, fkIdBodega: { idBodega: 1, nombreBodega: "Bodega Central" }, fkIdElemento: { idElemento: 1, nombreElemento: "Producto X" } },
-        { id: 2, stockActual: 8, stockMinimo: 30, fkIdBodega: { idBodega: 2, nombreBodega: "Bodega Secundaria" }, fkIdElemento: { idElemento: 2, nombreElemento: "Producto Y" } },
+        { id: 1, stockActual: 5, stockMinimo: 50, fkIdBodega: { idBodega: 1, nombreBodega: "Bodega Central" }, fkIdElemento: { idElemento: 1, nombreElemento: "carro" } },
+        { id: 2, stockActual: 8, stockMinimo: 30, fkIdBodega: { idBodega: 2, nombreBodega: "Bodega Secundaria" }, fkIdElemento: { idElemento: 2, nombreElemento: "Lapiz" } },
       ];
 
   const barData = ejemploCritico.map(be => ({
@@ -61,56 +63,70 @@ export default function StockCritico({ productosCriticos, historicoCritico }: St
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-      {/* Barra de stock actual vs mínimo */}
-      <CustomCard conten="Stock crítico vs mínimo">
-        <ResponsiveContainer width="100%" height={250}>
-          <BarChart data={barData}>
-            <XAxis dataKey="nombreProducto" />
-            <YAxis />
-            <Tooltip />
-            <Bar dataKey="cantidad" fill="#EF4444" />
-            <Bar dataKey="minimo" fill="#F59E0B" />
-          </BarChart>
-        </ResponsiveContainer>
-      </CustomCard>
+   <CustomCard conten="Stock actual vs mínimo">
+  <ResponsiveContainer width="100%" height={250}>
+    <BarChart layout="vertical" data={barData} margin={{ left: 60 }}>
+      <XAxis type="number" />
+      <YAxis dataKey="nombreProducto" type="category" />
+      <Tooltip />
+      <Bar dataKey="minimo" fill="#F59E0B" radius={[0, 8, 8, 0]} />
+      <Bar dataKey="cantidad" fill="#EF4444" radius={[0, 8, 8, 0]} />
+    </BarChart>
+  </ResponsiveContainer>
+</CustomCard>
 
-      {/* Distribución de stock crítico */}
-      <CustomCard conten="Distribución de productos críticos">
-        <ResponsiveContainer width="100%" height={250}>
-          <PieChart>
-            <Pie data={pieData} dataKey="cantidad" nameKey="nombreProducto" outerRadius={80}>
-              {pieData.map((_entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip />
-          </PieChart>
-        </ResponsiveContainer>
-      </CustomCard>
+  {/* Distribución de productos críticos */}
+<CustomCard conten="Distribución de productos críticos">
+  <ResponsiveContainer width="100%" height={250}>
+    <PieChart>
+      <Pie
+        data={pieData}
+        dataKey="cantidad"
+        nameKey="nombreProducto"
+        outerRadius={90}
+        label={({ name, percent }) =>
+          `${name}: ${(percent ?? 0 * 100).toFixed(0)}%`
+        }
+      >
+        {pieData.map((_entry, index) => (
+          <Cell
+            key={`cell-${index}`}
+            fill={COLORS[index % COLORS.length]}
+          />
+        ))}
+      </Pie>
+      <Tooltip
+        formatter={(value: number, _name, props) => [
+          `${value} unidades`,
+          props.payload?.nombreProducto,
+        ]}
+      />
+    </PieChart>
+  </ResponsiveContainer>
+</CustomCard>
 
-      {/* Evolución histórica de stock crítico */}
-      <CustomCard conten="Evolución histórica de stock crítico">
-        <ResponsiveContainer width="100%" height={250}>
-          <BarChart data={historicoCritico.length ? historicoCritico : [{ fecha: "2025-08-01", cantidad: 5 }, { fecha: "2025-08-02", cantidad: 8 }]}>
-            <XAxis dataKey="fecha" />
-            <YAxis />
-            <Tooltip />
-            <Bar dataKey="cantidad" fill="#EF4444" />
-          </BarChart>
-        </ResponsiveContainer>
-      </CustomCard>
 
-      {/* Acumulado de stock crítico */}
-      <CustomCard conten="Acumulado de stock crítico">
-        <ResponsiveContainer width="100%" height={250}>
-          <AreaChart data={areaData}>
-            <XAxis dataKey="fecha" />
-            <YAxis />
-            <Tooltip />
-            <Area type="monotone" dataKey="acumulado" fill="#EF4444" stroke="#B91C1C" />
-          </AreaChart>
-        </ResponsiveContainer>
-      </CustomCard>
+      <CustomCard conten="Evolución histórica de productos críticos">
+  <ResponsiveContainer width="100%" height={250}>
+    <AreaChart data={historicoCritico.length ? historicoCritico : [{ fecha: "2025-08-01", cantidad: 5 }, { fecha: "2025-08-02", cantidad: 8 }]}>
+      <XAxis dataKey="fecha" />
+      <YAxis />
+      <Tooltip />
+      <Area type="monotone" dataKey="cantidad" stroke="#EF4444" fill="#FCA5A5" strokeWidth={2} />
+    </AreaChart>
+  </ResponsiveContainer>
+</CustomCard>
+
+    <CustomCard conten="Acumulado de productos en riesgo">
+  <ResponsiveContainer width="100%" height={250}>
+    <LineChart data={areaData}>
+      <XAxis dataKey="fecha" />
+      <YAxis />
+      <Tooltip />
+      <Line type="monotone" dataKey="acumulado" stroke="#B91C1C" strokeWidth={3} dot={{ r: 4 }} />
+    </LineChart>
+  </ResponsiveContainer>
+</CustomCard>
     </div>
   );
 }

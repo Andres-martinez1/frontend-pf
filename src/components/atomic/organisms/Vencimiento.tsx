@@ -1,19 +1,18 @@
 import CustomCard from "../molecules/Card";
 import {
-  Treemap,
   ResponsiveContainer,
-  RadialBarChart,
-  RadialBar,
-  Legend,
-  PieChart,
-  Pie,
-  Cell,
-  ComposedChart,
+  BarChart,
   Bar,
-  Line,
   XAxis,
   YAxis,
   Tooltip,
+  CartesianGrid,
+  PieChart,
+  Pie,
+  Cell,
+  LineChart,
+  Line,
+  Legend,
 } from "recharts";
 import { Elemento } from "../../../types/Elementos/Elemento";
 
@@ -21,64 +20,117 @@ interface StockVencimientoProps {
   elementos: Elemento[];
 }
 
-const PIE_COLORS = ["#FBBF24", "#3B82F6", "#34D399", "#EF4444"];
+const PIE_COLORS = ["#EF4444", "#FBBF24", "#10B981"]; // Rojo = crítico, Amarillo = alerta, Verde = seguro
 
 export default function StockVencimiento({ elementos }: StockVencimientoProps) {
-  // 1. Treemap: cantidad total por producto
-  const treemapData = elementos.map(el => ({
-    name: el.nombreElemento,
-    size: el.bodegaElementos?.reduce((sum, b) => sum + b.cantidad, 0) || 0,
-  }));
+  const hoy = new Date();
 
-  // 2. RadialBar: días restantes hasta vencimiento
-  const radialData = elementos.map(el => {
-    const hoy = new Date();
+  // Calcular días restantes y cantidades totales
+  const elementosConDias = elementos.map((el) => {
     const venc = el.fechaVencimiento ? new Date(el.fechaVencimiento) : hoy;
-    const diasRestantes = Math.max(0, Math.ceil((venc.getTime() - hoy.getTime()) / (1000 * 60 * 60 * 24)));
-    return { name: el.nombreElemento, value: diasRestantes };
+    const diasRestantes = Math.max(
+      0,
+      Math.ceil((venc.getTime() - hoy.getTime()) / (1000 * 60 * 60 * 24))
+    );
+    const cantidadTotal =
+      el.bodegaElementos?.reduce((sum, b) => sum + b.cantidad, 0) || 0;
+
+    return { ...el, diasRestantes, cantidadTotal };
   });
 
-  // 3. PieChart: proporción de cantidad por bodega
-  const pieData: { name: string; value: number }[] = [];
-  elementos.forEach(el =>
-    el.bodegaElementos?.forEach(b => {
-      pieData.push({ name: b.fkIdBodega.nombreBodega, value: b.cantidad });
-    })
-  );
+  // 1. BarChart: productos más próximos a vencer
+  const barData = [...elementosConDias]
+    .sort((a, b) => a.diasRestantes - b.diasRestantes)
+    .map((el) => ({
+      nombreProducto: el.nombreElemento,
+      diasRestantes: el.diasRestantes,
+    }));
 
-  // 4. ComposedChart: cantidad total por producto (barras y línea)
-  const composedData = elementos.map(el => ({
-    nombreProducto: el.nombreElemento,
-    cantidadTotal: el.bodegaElementos?.reduce((sum, b) => sum + b.cantidad, 0) || 0,
+  // 2. PieChart: distribución por rangos de vencimiento
+  let critico = 0,
+    alerta = 0,
+    seguro = 0;
+  elementosConDias.forEach((el) => {
+    if (el.diasRestantes <= 30) critico += el.cantidadTotal;
+    else if (el.diasRestantes <= 90) alerta += el.cantidadTotal;
+    else seguro += el.cantidadTotal;
+  });
+
+  const pieData = [
+    { name: "Crítico (≤30 días)", value: critico },
+    { name: "Alerta (31-90 días)", value: alerta },
+    { name: "Seguro (>90 días)", value: seguro },
+  ];
+
+  // 3. StackedBarChart: stock por bodega con categorías de vencimiento
+  const bodegasMap: Record<
+    string,
+    { critico: number; alerta: number; seguro: number }
+  > = {};
+  elementosConDias.forEach((el) => {
+    el.bodegaElementos?.forEach((b) => {
+      if (!bodegasMap[b.fkIdBodega.nombreBodega]) {
+        bodegasMap[b.fkIdBodega.nombreBodega] = {
+          critico: 0,
+          alerta: 0,
+          seguro: 0,
+        };
+      }
+      if (el.diasRestantes <= 30)
+        bodegasMap[b.fkIdBodega.nombreBodega].critico += b.cantidad;
+      else if (el.diasRestantes <= 90)
+        bodegasMap[b.fkIdBodega.nombreBodega].alerta += b.cantidad;
+      else bodegasMap[b.fkIdBodega.nombreBodega].seguro += b.cantidad;
+    });
+  });
+
+  
+
+  // 4. LineChart: acumulación de vencimientos en el tiempo
+  const lineData = elementosConDias.map((el) => ({
+    fecha: el.fechaVencimiento || "Sin fecha",
+    cantidad: el.cantidadTotal,
   }));
+const stackedData = [
+  { bodega: "Bodega A", categoria: "critico", value: 12 },
+  { bodega: "Bodega A", categoria: "alerta", value: 8 },
+  { bodega: "Bodega A", categoria: "seguro", value: 20 },
+  { bodega: "Bodega B", categoria: "critico", value: 5 },
+  { bodega: "Bodega B", categoria: "alerta", value: 15 },
+  { bodega: "Bodega B", categoria: "seguro", value: 25 },
+];
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-      {/* Treemap */}
-      <CustomCard conten="Cantidad total por producto">
+      {/* BarChart: productos por días restantes */}
+      <CustomCard conten="Productos próximos a vencerse">
         <ResponsiveContainer width="100%" height={250}>
-          <Treemap data={treemapData} dataKey="size" stroke="#fff" fill="#8884d8" />
-        </ResponsiveContainer>
-      </CustomCard>
-
-      {/* RadialBar */}
-      <CustomCard conten="Días restantes hasta vencimiento">
-        <ResponsiveContainer width="100%" height={250}>
-          <RadialBarChart innerRadius="10%" outerRadius="80%" data={radialData}>
-            <RadialBar dataKey="value" background fill="#F59E0B" />
-            <Legend iconSize={10} layout="horizontal" verticalAlign="bottom" />
+          <BarChart data={barData} layout="vertical">
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis type="number" label={{ value: "Días restantes", position: "insideBottom", offset: -5 }} />
+            <YAxis dataKey="nombreProducto" type="category" />
             <Tooltip />
-          </RadialBarChart>
+            <Bar dataKey="diasRestantes" fill="#F59E0B" />
+          </BarChart>
         </ResponsiveContainer>
       </CustomCard>
 
-      {/* PieChart */}
-      <CustomCard conten="Proporción de cantidad por bodega">
+      {/* PieChart: distribución por categorías */}
+      <CustomCard conten="Distribución del stock por rango de vencimiento">
         <ResponsiveContainer width="100%" height={250}>
           <PieChart>
-            <Pie data={pieData} dataKey="value" nameKey="name" outerRadius={80} fill="#3B82F6" label>
+            <Pie
+              data={pieData}
+              dataKey="value"
+              nameKey="name"
+              outerRadius={80}
+              label
+            >
               {pieData.map((_entry, index) => (
-                <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+                <Cell
+                  key={`cell-${index}`}
+                  fill={PIE_COLORS[index % PIE_COLORS.length]}
+                />
               ))}
             </Pie>
             <Tooltip />
@@ -86,16 +138,39 @@ export default function StockVencimiento({ elementos }: StockVencimientoProps) {
         </ResponsiveContainer>
       </CustomCard>
 
-      {/* ComposedChart */}
-      <CustomCard conten="Cantidad total por producto">
+     <CustomCard conten="Stock por vencimiento en Bodega A">
+  <ResponsiveContainer width="100%" height={300}>
+    <PieChart>
+      <Pie
+        data={stackedData.filter(item => item.bodega === "Bodega A")} // 👈 filtra la bodega
+        dataKey="value"
+        nameKey="categoria"
+        cx="50%"
+        cy="50%"
+        innerRadius={60}
+        outerRadius={100}
+        label
+      >
+        <Cell key="critico" fill="#EF4444" />
+        <Cell key="alerta" fill="#FBBF24" />
+        <Cell key="seguro" fill="#10B981" />
+      </Pie>
+      <Tooltip />
+      <Legend />
+    </PieChart>
+  </ResponsiveContainer>
+</CustomCard>
+
+      {/* LineChart: evolución de vencimientos */}
+      <CustomCard conten="Evolución de vencimientos en el tiempo">
         <ResponsiveContainer width="100%" height={250}>
-          <ComposedChart data={composedData}>
-            <XAxis dataKey="nombreProducto" />
+          <LineChart data={lineData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="fecha" />
             <YAxis />
             <Tooltip />
-            <Bar dataKey="cantidadTotal" barSize={20} fill="#10B981" />
-            <Line type="monotone" dataKey="cantidadTotal" stroke="#EF4444" strokeWidth={2} />
-          </ComposedChart>
+            <Line type="monotone" dataKey="cantidad" stroke="#3B82F6" strokeWidth={2} />
+          </LineChart>
         </ResponsiveContainer>
       </CustomCard>
     </div>

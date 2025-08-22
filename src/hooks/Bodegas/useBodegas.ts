@@ -18,18 +18,18 @@ export function useBodegas() {
     queryFn: getBodegas,
   });
 
-  const crear = useMutation({
+  const crearBodega = useMutation({
     mutationFn: (payload: BodegaPost) => postBodega(payload),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["bodegas"] }),
   });
 
-  const actualizar = useMutation({
+  const actualizarBodega = useMutation({
     mutationFn: ({ id, data }: { id: number; data: BodegaPut }) =>
       putBodega(id, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["bodegas"] }),
   });
 
-  const eliminar = useMutation({
+  const eliminarBodega = useMutation({
     mutationFn: (id: number) => deleteBodega(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["bodegas"] }),
   });
@@ -38,9 +38,9 @@ export function useBodegas() {
     registros: data ?? [],
     isLoading,
     isError,
-    crear,
-    actualizar,
-    eliminar,
+    crearBodega,
+    actualizarBodega,
+    eliminarBodega,
   };
 }
 

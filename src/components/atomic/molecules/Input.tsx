@@ -7,7 +7,7 @@ type CustomInputProps = {
   width?: string;
   className?: string;
   placeholder?: string;
-  value?: string;
+  value?: string | number;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   inputRef?: RefObject<HTMLInputElement>;
   disabled?: boolean;
@@ -22,7 +22,7 @@ export default function CustomInput({
   value,
   onChange,
   inputRef,
-  disabled = false, 
+  disabled = false,
 }: CustomInputProps) {
   const customStyle = { width };
 
@@ -33,10 +33,10 @@ export default function CustomInput({
         type={type}
         className={className}
         placeholder={placeholder}
-        value={value}
+        value={value !== undefined && value !== null ? String(value) : ""}
         onChange={onChange}
         ref={inputRef}
-        isDisabled={disabled} 
+        isDisabled={disabled}
       />
     </div>
   );

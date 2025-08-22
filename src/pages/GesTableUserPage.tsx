@@ -58,10 +58,30 @@ export default function GesTableUserPage() {
     return <div>Cargando datos...</div>;
   }
   
-  if (isErrorAreas || isErrorBodegaElementos || isErrorBodegas || isErrorFichas || isErrorMunicipios || isErrorProgramas || isErrorRoles || isErrorSedes) {
-    console.error("Error al cargar datos desde la API");
-    return <div>Error: No se pudieron cargar todos los datos.</div>;
-  }
+  if (
+  isErrorAreas ||
+  isErrorBodegaElementos ||
+  isErrorBodegas ||
+  isErrorFichas ||
+  isErrorMunicipios ||
+  isErrorProgramas ||
+  isErrorRoles ||
+  isErrorSedes
+) {
+  console.error("Error al cargar datos desde la API", {
+    areas: isErrorAreas,
+    bodegas: isErrorBodegas,
+    bodegaElementos: isErrorBodegaElementos,
+    fichas: isErrorFichas,
+    municipios: isErrorMunicipios,
+    programas: isErrorProgramas,
+    roles: isErrorRoles,
+    sedes: isErrorSedes,
+  });
+
+  return <div>Error: No se pudieron cargar todos los datos.</div>;
+}
+
   
   const elementosParaLaTabla: Elemento[] = bodegaElementos.map(
     (bodegaElemento: BodegaElemento) => bodegaElemento.fkIdElemento

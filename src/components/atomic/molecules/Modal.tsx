@@ -15,18 +15,20 @@ type CustomModalProps = {
   cancelLabel: string;
   confirmLabel: string;
   onConfirm?: () => void;
+  cancelAction?: () => void; // 👈 agregado
   ButtonLabel?: string;
   BgColor?: string;
+  isLoading?: boolean;
   cancelBgColor: string;
   confirmBgColor: string;
   cancelTextColor: string;
-  bordecancel?:string;
-  bordeconfirm?:string;
+  bordecancel?: string;
+  bordeconfirm?: string;
   confirmTextColor: string;
   textColor?: string;
   icon?: React.ReactNode;
-  className?:string;
-  trigger?: React.ReactNode; 
+  className?: string;
+  trigger?: React.ReactNode;
   size: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "full";
   radius: "none" | "sm" | "md" | "lg";
   backdrop: "transparent" | "opaque" | "blur";
@@ -37,17 +39,18 @@ type CustomModalProps = {
 
 export default function CustomModal({
   content,
-  title="black",
-  className="",
+  title = "black",
+  className = "",
   confirmLabel,
   ButtonLabel,
   BgColor = "#1A1A36",
   cancelBgColor,
-  confirmBgColor,
+  confirmBgColor= "#1A1A36",
   cancelTextColor,
   bordecancel,
   bordeconfirm,
   cancelLabel,
+  isLoading = false,
   confirmTextColor,
   textColor = "#ffffff",
   icon,
@@ -58,6 +61,8 @@ export default function CustomModal({
   placement,
   scrollBehavior,
   shadow,
+  onConfirm,
+  cancelAction, // 👈 agregado
 }: CustomModalProps) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -94,20 +99,31 @@ export default function CustomModal({
               <ModalHeader className="flex flex-col gap-1">{title}</ModalHeader>
               <ModalBody>{content}</ModalBody>
               <ModalFooter className="flex justify-end gap-2">
+                {/* Cancelar */}
                 <CustomBoton
                   variant="light"
-                  onPress={onClose}
+                  onPress={() => {
+                    cancelAction?.(); // Ejecuta acción extra si existe
+                    onClose();
+                  }}
                   bgColor={cancelBgColor}
                   textColor={cancelTextColor}
                   titulo={cancelLabel}
                   borderColor={bordecancel}
+                  disabled={isLoading}
                 />
+
+                {/* Confirmar */}
                 <CustomBoton
-                  onPress={onClose}
+                  onPress={() => {
+                    onConfirm?.();
+                    onClose();
+                  }}
                   bgColor={confirmBgColor}
                   textColor={confirmTextColor}
-                  titulo={confirmLabel}
+                  titulo={isLoading ? "Cargando..." : confirmLabel}
                   borderColor={bordeconfirm}
+                  disabled={isLoading}
                 />
               </ModalFooter>
             </>

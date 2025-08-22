@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/solid";
 import CustomTextarea from "../molecules/Textarea";
-import { Button } from "@heroui/react";
 
 // Hooks
 import { useAreas } from "../../../hooks/Areas/useAreas";
@@ -27,11 +26,9 @@ type EliminarItemContentProps = {
 export default function EliminarItemContent({
   entityLabel,
   itemName,
-  itemId,
   category,
   warningMessage,
   withComment = false,
-  onSuccess,
 }: EliminarItemContentProps) {
   const [comment, setComment] = useState("");
 
@@ -66,14 +63,6 @@ export default function EliminarItemContent({
     return null;
   }
 
-  const handleDelete = () => {
-    deleteMutation.mutate(itemId, {
-      onSuccess: () => {
-        if (onSuccess) onSuccess();
-      },
-      onError: (err: any) => console.error("Error al eliminar:", err),
-    });
-  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -108,11 +97,6 @@ export default function EliminarItemContent({
         />
       )}
 
-      <div className="flex justify-end">
-        <Button color="danger" onClick={handleDelete}>
-          Eliminar
-        </Button>
-      </div>
     </div>
   );
 }

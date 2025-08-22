@@ -1,5 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getUsuarios, getUsuarioById, postUsuario, updateUsuario, deleteUsuario } from "../../api/Usuarios";
+import { 
+  getUsuarios, 
+  getUsuarioById, 
+  postUsuario, 
+  updateUsuario, 
+  deleteUsuario 
+} from "../../api/Usuarios";
 import { Usuario } from "../../types/Usuarios/Usuario";
 import { UsuarioPostData } from "../../types/Usuarios/UsuarioPost";
 import { UsuarioPutData } from "../../types/Usuarios/UsuarioPut";
@@ -13,19 +19,16 @@ export function useUsuarios() {
     queryFn: getUsuarios,
   });
 
-  const getUsuarioByIdQuery = (id: number) =>
-    useQuery<Usuario>({
-      queryKey: ["usuarios", id],
-      queryFn: () => getUsuarioById(id),
-      enabled: !!id,
-    });
-
   const crearUsuario = useMutation<UsuarioResponse, Error, UsuarioPostData>({
     mutationFn: postUsuario,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["usuarios"] }),
   });
 
-  const actualizarUsuario = useMutation<UsuarioResponse, Error, { id: number; data: UsuarioPutData }>({
+  const actualizarUsuario = useMutation<
+    UsuarioResponse, 
+    Error, 
+    { id: number; data: UsuarioPutData }
+  >({
     mutationFn: ({ id, data }) => updateUsuario(id, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["usuarios"] }),
   });
@@ -39,9 +42,17 @@ export function useUsuarios() {
     usuarios: usuariosQuery.data ?? [],
     isLoading: usuariosQuery.isLoading,
     isError: usuariosQuery.isError,
-    getUsuarioByIdQuery,
     crearUsuario,
     actualizarUsuario,
     eliminarUsuario,
   };
+}
+
+// 🔹 Hook separado para obtener un solo usuario por ID
+export function useUsuario(id: number) {
+  return useQuery<Usuario>({
+    queryKey: ["usuarios", id],
+    queryFn: () => getUsuarioById(id),
+    enabled: !!id, // evita ejecutar si el id es 0 o undefined
+  });
 }

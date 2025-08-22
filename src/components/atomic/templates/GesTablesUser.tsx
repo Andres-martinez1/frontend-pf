@@ -36,6 +36,7 @@ interface GesTablesUserProps {
   programasData?: Programa[];
   rolesData?: Rol[];
   sedesData?: Sede[];
+  centrosData?: Centro[] ;
   // --- CORRECCIÓN #1: Se añade la prop para recibir la lista de usuarios ---
   usuariosData?: Usuario[];
 }
@@ -47,6 +48,7 @@ const GesTablesUser = ({
   bodegasData = [],
   fichasData = [],
   municipiosData = [],
+  centrosData = [],
   programasData = [],
   rolesData = [],
   sedesData = [],
@@ -54,8 +56,6 @@ const GesTablesUser = ({
   usuariosData = [],
 }: GesTablesUserProps) => {
 
-  // Simulación de datos para Centros, como en tu ejemplo.
-  const centrosData: Centro[] = [];
 
   // Definición de las tablas que se mostrarán en la interfaz
   const tablas = [

@@ -1,119 +1,88 @@
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, CartesianGrid } from "recharts";
 import CustomCard from "../molecules/Card";
-import {
-  Treemap,
-  ResponsiveContainer,
-  RadialBarChart,
-  RadialBar,
-  Legend,
-  PieChart,
-  Pie,
-  Cell,
-  ComposedChart,
-  Bar,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-} from "recharts";
-import { Elemento } from "../../../types/Elementos/Elemento";
 
-interface StockUrgenciaProps {
-  elementos: Elemento[];
-}
-
-const URGENCY_COLORS = ["#10B981", "#FBBF24", "#F97316", "#EF4444"]; // verde, amarillo, naranja, rojo
-
-export default function StockUrgencia({ elementos }: StockUrgenciaProps) {
-  const hoy = new Date();
-
-  // Calcular días restantes y nivel de urgencia
-  const elementosUrgencia = elementos.map(el => {
-    const venc = el.fechaVencimiento ? new Date(el.fechaVencimiento) : hoy;
-    const diasRestantes = Math.max(0, Math.ceil((venc.getTime() - hoy.getTime()) / (1000 * 60 * 60 * 24)));
-    let nivel = 0;
-    if (diasRestantes <= 5) nivel = 3;
-    else if (diasRestantes <= 15) nivel = 2;
-    else if (diasRestantes <= 30) nivel = 1;
-    return { ...el, diasRestantes, nivel };
-  });
-
-  // Treemap: cantidad total por producto
-  const treemapData = elementosUrgencia.map(el => ({
-    name: el.nombreElemento,
-    size: el.bodegaElementos?.reduce((sum, b) => sum + b.cantidad, 0) || 0,
-    fill: URGENCY_COLORS[el.nivel],
-  }));
-
-  // RadialBar: urgencia de vencimiento
-  const radialData = elementosUrgencia.map(el => ({
-    name: el.nombreElemento,
-    value: el.diasRestantes,
-    fill: URGENCY_COLORS[el.nivel],
-  }));
-
-  // PieChart: proporción de productos por nivel de urgencia
-  const pieData = [
-    { name: "Vencido/Muy Urgente", value: elementosUrgencia.filter(e => e.nivel === 3).length },
-    { name: "Próximo a vencer", value: elementosUrgencia.filter(e => e.nivel === 2).length },
-    { name: "Moderado", value: elementosUrgencia.filter(e => e.nivel === 1).length },
-    { name: "Seguro", value: elementosUrgencia.filter(e => e.nivel === 0).length },
+export default function DashboardGraficas() {
+  // Datos mock
+  const stockUrgente = [
+    { nombre: "Leche", stock: 30, diasRestantes: 5 },
+    { nombre: "Yogurt", stock: 20, diasRestantes: 3 },
+    { nombre: "Pan", stock: 50, diasRestantes: 10 },
+    { nombre: "Queso", stock: 15, diasRestantes: 2 },
   ];
 
-  // ComposedChart: días restantes por producto
-  const composedData = elementosUrgencia.map(el => ({
-    nombreProducto: el.nombreElemento,
-    diasRestantes: el.diasRestantes,
-  }));
+  const productosCercanos = [
+    { nombre: "Leche", diasRestantes: 5 },
+    { nombre: "Yogurt", diasRestantes: 3 },
+    { nombre: "Queso", diasRestantes: 2 },
+    { nombre: "Mantequilla", diasRestantes: 8 },
+  ];
+
+  const stockGeneral = [
+    { nombre: "Leche", stock: 120 },
+    { nombre: "Yogurt", stock: 80 },
+    { nombre: "Pan", stock: 200 },
+    { nombre: "Queso", stock: 50 },
+  ];
+
+  const vencimientoMensual = [
+    { mes: "Enero", vencidos: 12 },
+    { mes: "Febrero", vencidos: 8 },
+    { mes: "Marzo", vencidos: 15 },
+    { mes: "Abril", vencidos: 6 },
+  ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-      {/* Treemap */}
-      <CustomCard conten="Cantidad total por producto (urgencia)">
-        <ResponsiveContainer width="100%" height={250}>
-          <Treemap
-            data={treemapData}
-            dataKey="size"
-            stroke="#fff"
-            fill="#8884d8"
-          />
-        </ResponsiveContainer>
-      </CustomCard>
-
-      {/* RadialBar */}
-      <CustomCard conten="Urgencia de vencimiento (días restantes)">
-        <ResponsiveContainer width="100%" height={250}>
-          <RadialBarChart innerRadius="10%" outerRadius="80%" data={radialData}>
-            <RadialBar dataKey="value" background fill="#8884d8" />
-            <Legend iconSize={10} layout="horizontal" verticalAlign="bottom" />
-            <Tooltip />
-          </RadialBarChart>
-        </ResponsiveContainer>
-      </CustomCard>
-
-      {/* PieChart */}
-      <CustomCard conten="Distribución por nivel de urgencia">
-        <ResponsiveContainer width="100%" height={250}>
-          <PieChart>
-            <Pie data={pieData} dataKey="value" nameKey="name" outerRadius={80} label>
-              {pieData.map((_entry, index) => (
-                <Cell key={`cell-${index}`} fill={URGENCY_COLORS[index]} />
-              ))}
-            </Pie>
-            <Tooltip />
-          </PieChart>
-        </ResponsiveContainer>
-      </CustomCard>
-
-      {/* ComposedChart */}
-      <CustomCard conten="Días restantes por producto">
-        <ResponsiveContainer width="100%" height={250}>
-          <ComposedChart data={composedData}>
-            <XAxis dataKey="nombreProducto" />
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Stock Urgente */}
+      <CustomCard conten={""} >
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={stockUrgente}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="nombre" />
             <YAxis />
             <Tooltip />
-            <Bar dataKey="diasRestantes" barSize={20} fill="#F59E0B" />
-            <Line type="monotone" dataKey="diasRestantes" stroke="#EF4444" strokeWidth={2} />
-          </ComposedChart>
+            <Bar dataKey="stock" fill="#0077B6" name="Stock" />
+            <Bar dataKey="diasRestantes" fill="#FF4D4D" name="Días Restantes" />
+          </BarChart>
+        </ResponsiveContainer>
+      </CustomCard>
+
+      {/* Productos próximos a vencer */}
+      <CustomCard conten={""} >
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={productosCercanos}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="nombre" />
+            <YAxis />
+            <Tooltip />
+            <Bar dataKey="diasRestantes" fill="#FFB703" name="Días Restantes" />
+          </BarChart>
+        </ResponsiveContainer>
+      </CustomCard>
+
+      {/* Stock General */}
+      <CustomCard conten={""} >
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={stockGeneral}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="nombre" />
+            <YAxis />
+            <Tooltip />
+            <Bar dataKey="stock" fill="#00B4D8" name="Stock" />
+          </BarChart>
+        </ResponsiveContainer>
+      </CustomCard>
+
+      {/* Vencimientos por mes */}
+      <CustomCard conten={""} >
+        <ResponsiveContainer width="100%" height={300}>
+          <LineChart data={vencimientoMensual}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="mes" />
+            <YAxis />
+            <Tooltip />
+            <Line type="monotone" dataKey="vencidos" stroke="#03045E" name="Productos Vencidos" />
+          </LineChart>
         </ResponsiveContainer>
       </CustomCard>
     </div>
