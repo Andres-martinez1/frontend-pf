@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; 
 import { Button, Input } from "@heroui/react";
-import { requestPasswordResetApi } from "../services/auth.service";
 import AuthFormTemplate from "../components/atomic/templates/AuthFormTemplate";
 
 const ForgotPasswordPage = () => {
+  const navigate = useNavigate(); 
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -14,13 +14,20 @@ const ForgotPasswordPage = () => {
     setLoading(true);
     setMessage("");
     try {
-      const response = await requestPasswordResetApi({ email });
-      setMessage(response.message);
+    
+      setMessage('Código enviado. Serás redirigido para restablecer tu contraseña...');
+
+      
+      setTimeout(() => {
+        
+        navigate('/reset-password', { state: { email: email } });
+      }, 2000);
+
     } catch (err: any) {
       setMessage(err.response?.data?.message || "Error al solicitar la recuperación.");
-    } finally {
-      setLoading(false);
+      setLoading(false); 
     }
+    
   };
 
   return (
