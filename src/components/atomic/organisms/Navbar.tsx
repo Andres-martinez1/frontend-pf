@@ -25,6 +25,7 @@ import {
   LogOut,
 } from "lucide-react";
 
+
 interface NavbarAppProps {
   leftContent?: React.ReactNode;
   centerContent?: React.ReactNode;
@@ -33,6 +34,7 @@ interface NavbarAppProps {
   fullName?: string;
   menuItems?: Array<MenuItem>;
   onLogOut?: () => void;
+  loading?: boolean;
 }
 
 const NavbarApp = ({
@@ -41,6 +43,7 @@ const NavbarApp = ({
   email,
   menuItems,
   onLogOut,
+  loading,
 }: NavbarAppProps) => {
   const NAME_APP = import.meta.env.VITE_NAME_APP;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -144,9 +147,14 @@ const NavbarApp = ({
                 <User size={16} className="inline-block mr-2" />
                 Mi Perfil
               </DropdownItem>
-              <DropdownItem key="logout" onPress={onLogOut} className="text-danger">
+              <DropdownItem
+                key="logout"
+                onPress={!loading ? onLogOut : undefined}
+                className="text-danger"
+                color="danger"
+              >
                 <LogOut size={16} className="inline-block mr-2" />
-                Cerrar Sesión
+                {loading ? "Cerrando Sesión..." : "Cerrar Sesión"}
               </DropdownItem>
             </DropdownMenu>
           </Dropdown>

@@ -1,12 +1,11 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import NotFound from "../components/atomic/templates/NotFound";
-import LoginPage from "../pages/LoginPage";
+import { routes } from "./Routes";
 import AuthLayout from "../layouts/AuthLayout";
 import ProtectedRoute from "./ProtectedRoute";
-import AdminLayout from "../layouts/AdminLayout";
 import RedirectIfAuthenticated from "./RedirectIfAuthenticated";
-import { useAuth } from "../hooks/Auth/use-auth";
-import { routes } from "./Routes";
+import LoginPage from "../pages/LoginPage";
+import ForgotPasswordPage from "../pages/ForgotPasswordPage";
+import ResetPasswordPage from "../pages/ResetPasswordPage";
 import DasboardPage from "../pages/DasboardPage";
 import UsuariosPage from "../pages/UsuariosPage";
 import GesTableUserPage from "../pages/GesTableUserPage";
@@ -15,119 +14,60 @@ import BodegasPage from "../pages/BodegasPage";
 import SolicitudPage from "../pages/SolicitudesPge";
 import ProfilePage from "../pages/ProfilePage";
 import ProductCatalogPage from "../pages/ProductPage";
-
-
-
+import NotFound from "../components/atomic/templates/NotFound";
 
 const AppRoutes = () => {
-  const { isAuthenticated } = useAuth();
-
+  
   return (
+  
     <Routes>
       <Route
         path={routes.home}
         element={
-          <RedirectIfAuthenticated isAuthenticated={isAuthenticated}>
-            <Navigate to={routes.login} />
+          <RedirectIfAuthenticated>
+            <Navigate to={routes.login} replace />
           </RedirectIfAuthenticated>
         }
       />
+
       <Route element={<AuthLayout />}>
         <Route
           path={routes.login}
           element={
-            <RedirectIfAuthenticated isAuthenticated={isAuthenticated}>
+            <RedirectIfAuthenticated>
               <LoginPage />
             </RedirectIfAuthenticated>
           }
         />
-      </Route>
-      <Route element={<AdminLayout />}>
         <Route
-          path={routes.admin}
+          path={routes.forgotPassword}
           element={
-            <ProtectedRoute
-              component={DasboardPage}
-              isAuthenticated={isAuthenticated}
-            />
+            <RedirectIfAuthenticated>
+              <ForgotPasswordPage />
+            </RedirectIfAuthenticated>
           }
         />
         <Route
-          path={routes.users}
+          path={routes.resetPassword}
           element={
-            <ProtectedRoute
-              component={UsuariosPage}
-              isAuthenticated={isAuthenticated}
-            />
-          }
-        />
-          <Route
-          path={routes.tables}
-          element={
-            <ProtectedRoute
-              component={GesTableUserPage}
-              isAuthenticated={isAuthenticated}
-            />
-          }
-        />
-              
-        <Route
-          path={routes.stats}
-          element={
-            <ProtectedRoute
-              component={EstadisticasPage}
-              isAuthenticated={isAuthenticated}
-            />
-          }
-        />
-        
-        <Route
-          path={routes.warehouses}
-          element={
-            <ProtectedRoute
-              component={BodegasPage}
-              isAuthenticated={isAuthenticated}
-            />
-          }
-        />
-        
-        {/* <Route
-          path={routes.help}
-          element={
-            <ProtectedRoute
-              component={AdminHelperPage}
-              isAuthenticated={isAuthenticated}
-            />
-          }
-        /> */}
-        <Route
-          path={routes.solicitudes}
-          element={
-            <ProtectedRoute
-              component={SolicitudPage}
-              isAuthenticated={isAuthenticated}
-            />
-          }
-        />
-        <Route
-          path={routes.profile}
-          element={
-            <ProtectedRoute
-              component={ProfilePage}
-              isAuthenticated={isAuthenticated}
-            />
-          }
-        />
-        <Route
-          path={routes.products}
-          element={
-            <ProtectedRoute
-              component={ProductCatalogPage}
-              isAuthenticated={isAuthenticated}
-            />
+            <RedirectIfAuthenticated>
+              <ResetPasswordPage />
+            </RedirectIfAuthenticated>
           }
         />
       </Route>
+
+      <Route element={<ProtectedRoute />}>
+        <Route path={routes.admin} element={<DasboardPage />} />
+        <Route path={routes.users} element={<UsuariosPage />} />
+        <Route path={routes.tables} element={<GesTableUserPage />} />
+        <Route path={routes.stats} element={<EstadisticasPage />} />
+        <Route path={routes.warehouses} element={<BodegasPage />} />
+        <Route path={routes.solicitudes} element={<SolicitudPage />} />
+        <Route path={routes.profile} element={<ProfilePage />} />
+        <Route path={routes.products} element={<ProductCatalogPage />} />
+      </Route>
+
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

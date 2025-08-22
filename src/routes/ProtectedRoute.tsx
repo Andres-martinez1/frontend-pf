@@ -1,17 +1,22 @@
-import React from 'react';
 import { Navigate } from 'react-router-dom';
+import { useAuth } from '../hooks/Auth/use-auth';
+import AdminLayout from '../layouts/AdminLayout'; 
 import { routes } from './Routes';
 
-interface ProtectedRouteProps {
-  component: React.ComponentType<any>;
-  isAuthenticated: boolean;
-}
 
-const ProtectedRoute = ({ component: Component, isAuthenticated }: ProtectedRouteProps) => {
-  if (!isAuthenticated) {
-    return <Navigate to={routes.login} />;
+const ProtectedRoute = () => {
+  const { isAuthenticated, initialLoading } = useAuth();
+  if (initialLoading) {
+    return <div>Verificando sesión...</div>;
   }
-  return <Component />;
+
+ 
+  if (!isAuthenticated) {
+    return <Navigate to={routes.login} replace />;
+  }
+
+
+  return <AdminLayout />;
 };
 
 export default ProtectedRoute;

@@ -1,45 +1,94 @@
-import { createContext, useState, useEffect, useContext } from 'react';
-import { User } from "../models/user";
+import { createContext, useState, useEffect, useContext, ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { User } from "../models/user"; // Ajusta la ruta a tu modelo
+import {
+  AuthLoginPayload,
+  loginApi,
+  logoutApi,
+  checkAuthStatusApi
+} from '../services/auth.service';
 
 interface AuthContextType {
   isAuthenticated: boolean;
   user: User | null;
-  onLoginSuccess: (request: User) => void;
-  onLogout: () => void;
+  login: (data: AuthLoginPayload) => Promise<void>;
+  logout: () => void;
+  loading: boolean; // Estado para saber si se está procesando algo (login, logout, etc.)
+  initialLoading: boolean; // Estado para el chequeo inicial de sesión
+  error: string | null;
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 
-export const AuthProvider = ({ children }: any) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    const savedAuth = localStorage.getItem('isAuthenticated');
-    return savedAuth ? JSON.parse(savedAuth) : false;
-  });
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const navigate = useNavigate();
 
-  const [user, setUser] = useState<User | null>(() => {
-    const savedUser = localStorage.getItem('user');
-    return savedUser ? JSON.parse(savedUser) : null;
-  });
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [initialLoading, setInitialLoading] = useState<boolean>(true); 
+  const [error, setError] = useState<string | null>(null);
 
+  
   useEffect(() => {
-    localStorage.setItem('isAuthenticated', JSON.stringify(isAuthenticated));
-    localStorage.setItem('user', JSON.stringify(user));
-  }, [isAuthenticated, user]);
+    const checkSession = async () => {
+      try {
+        
+        const { user } = await checkAuthStatusApi();
+        if (user) {
+          setUser(user);
+          setIsAuthenticated(true);
+        }
+      } catch (err) {
+        
+        setUser(null);
+        setIsAuthenticated(false);
+      } finally {
+    
+        setInitialLoading(false);
+      }
+    };
 
-  const onLoginSuccess = (result: User) => {
-    setUser(result);
-    setIsAuthenticated(true);
+    checkSession();
+  }, []);
+
+  const login = async (data: AuthLoginPayload) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await loginApi(data);
+      setUser(response.user);
+      setIsAuthenticated(true);
+      navigate("/admin"); 
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.message || "Credenciales inválidas.";
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const onLogout = () => {
-    setIsAuthenticated(false);
-    setUser(null);
-    localStorage.removeItem('isAuthenticated');
-    localStorage.removeItem('user');
+  const logout = async () => {
+    setLoading(true);
+    try {
+      await logoutApi(); 
+    } catch (err) {
+      console.error("Error en el logout:", err);
+    } finally {
+      setUser(null);
+      setIsAuthenticated(false);
+      setLoading(false);
+      navigate('/login');
+    }
   };
+
+  
+  if (initialLoading) {
+    return <div>Verificando sesión...</div>; 
+  }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, onLoginSuccess, onLogout }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, login, logout, loading, initialLoading, error }}>
       {children}
     </AuthContext.Provider>
   );
@@ -48,7 +97,7 @@ export const AuthProvider = ({ children }: any) => {
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    throw new Error("useAuth debe ser usado dentro de un AuthProvider");
   }
   return context;
 };
